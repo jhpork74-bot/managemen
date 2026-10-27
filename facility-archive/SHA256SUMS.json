@@ -1,7 +1,7 @@
 {
   ".gitignore": "b5b3d35abe021433e59b473385189f983c8002a371b5ff542e978831ceac80b6",
-  "README.md": "30ea6381e5dcdbb6bef709c06b5a22c1f9d6845b1c06a5acc9b9aa8e294d2149",
-  "VALIDATION.json": "02cb1264b32662fbfe5a73e95fb916fac9af2b3c7062ea59afeab57a4d332885",
+  "README.md": "0c07757d9ecae1d63da97a3e780bd39adaa1b9842cadf2112b823ba8ed8d6165",
+  "VALIDATION.json": "922f6054ab995a77a91a1965145a9cffb024d809f100d6ef625cb21843198702",
   "verify-archive.cjs": "10434d38c8a230b06661c6a0b2581e77e0fc64d79665c50c0b8710170ff7268c",
   "versions/v4.4.1/CalendarReminders.gs": "946bde8c21ec94071770c538f94bdff3bdcf15b21d30280a694eb57983d78b77",
   "versions/v4.4.1/Code.gs": "d618f47851a338c86311e9b6dac91a354389bb2cc874e6771a67fde1caff2d89",
@@ -50,5 +50,19 @@
   "versions/v4.4.5/verify-person-rules.cjs": "efcfa3c733781b4c679b949b14ab83e66ed1654e7e2c81c686c284e5835dec45",
   "versions/v4.4.5/verify-storage.cjs": "6c121439fc95fc20887698f062684f28b3898b36955e08c64d89cf295432e1ae",
   "versions/v4.4.5/verify-upgrade.cjs": "685e0438ff0ea5efd836596067c5a50365f6f2f6d57c21525b556e4dbe82506b",
-  "VERSIONS.json": "aebadea943208b8b4bdc6a64c5434924571af888bb7bc7179a28bce7738dedde"
+  "VERSIONS.json": "e0c7dab49136feb73a2b8fc7e8e45d898e478ed34b98596af2fb492ea328202b",
+  "versions/v4.4.6/CalendarReminders.gs": "946bde8c21ec94071770c538f94bdff3bdcf15b21d30280a694eb57983d78b77",
+  "versions/v4.4.6/Code.gs": "d618f47851a338c86311e9b6dac91a354389bb2cc874e6771a67fde1caff2d89",
+  "versions/v4.4.6/duty-core.js": "47b05e0b7d2a437fe5dad5a24d433c30256bb8a412505f082d23da9aed96c8b7",
+  "versions/v4.4.6/DutyManagement.gs": "3f967d97a5b2ab64f2cb21d2de24b2d890e514139ac53c13cbcfaa3ef4eab93d",
+  "versions/v4.4.6/Index.html": "2c10c142db8a8c6df227c7ce79fa2a8c1b2bedcaa9af8e5fbe5d9fdd936f5d85",
+  "versions/v4.4.6/NoEndRepeats.gs": "0f534bc2af427ba8a4414738619aa7361211a0d25f1f44c864745c823336da3f",
+  "versions/v4.4.6/README.md": "9d5a9c487451787c0661c9fa9b7c4ad58872fd8d5ce8d3acc16e2072156ecfd0",
+  "versions/v4.4.6/stock-needs.js": "6d508717ea1bf649ce56f244c6ea96059b32cd8dd60d390d963982256d4da592",
+  "versions/v4.4.6/verify-modes.cjs": "04c3158d121b0767d7346c7dd62a7df5e779757a0d53da83596cf8e4dd3347a8",
+  "versions/v4.4.6/verify-person-rules.cjs": "efcfa3c733781b4c679b949b14ab83e66ed1654e7e2c81c686c284e5835dec45",
+  "versions/v4.4.6/verify-storage.cjs": "6c121439fc95fc20887698f062684f28b3898b36955e08c64d89cf295432e1ae",
+  "versions/v4.4.6/verify-unassigned.cjs": "bc2c72207a24e55b6fe96c6cda602376dea3cea3e0ef80d0ab3f85fa18b4b0e8",
+  "versions/v4.4.6/verify-upgrade.cjs": "685e0438ff0ea5efd836596067c5a50365f6f2f6d57c21525b556e4dbe82506b",
+  "versions/v4.4.6/교체및변경안내.md": "9ccaf54187405e343ea77fc0e56cfebc0096c84a18d92a0a1b26b01ba2225010"
 }

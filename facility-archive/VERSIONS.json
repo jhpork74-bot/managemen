@@ -215,6 +215,71 @@
           "originalSha256": "6d508717ea1bf649ce56f244c6ea96059b32cd8dd60d390d963982256d4da592"
         }
       ]
+    },
+    {
+      "id": "v4.4.6",
+      "title": "미배정 고정 대체자·달력 두 번째 줄 정리",
+      "status": "로컬 검증 / 운영 확인 전",
+      "scope": "미배정 직원 고정 선택·소속 보존과 대체 필요일에만 달력 두 번째 줄 표시",
+      "files": [
+        {
+          "file": "Code.gs",
+          "source": "prior sanitized archive",
+          "originalSha256": "d618f47851a338c86311e9b6dac91a354389bb2cc874e6771a67fde1caff2d89"
+        },
+        {
+          "file": "CalendarReminders.gs",
+          "source": "prior sanitized archive",
+          "originalSha256": "946bde8c21ec94071770c538f94bdff3bdcf15b21d30280a694eb57983d78b77"
+        },
+        {
+          "file": "NoEndRepeats.gs",
+          "source": "prior sanitized archive",
+          "originalSha256": "0f534bc2af427ba8a4414738619aa7361211a0d25f1f44c864745c823336da3f"
+        },
+        {
+          "file": "stock-needs.js",
+          "source": "prior sanitized archive",
+          "originalSha256": "6d508717ea1bf649ce56f244c6ea96059b32cd8dd60d390d963982256d4da592"
+        },
+        {
+          "file": "verify-storage.cjs",
+          "source": "prior sanitized archive",
+          "originalSha256": "6c121439fc95fc20887698f062684f28b3898b36955e08c64d89cf295432e1ae"
+        },
+        {
+          "file": "Index.html",
+          "originalSha256": "c3a87f733414a4d93a69558e1600f987092f811b1870181413b95197ea49c538"
+        },
+        {
+          "file": "DutyManagement.gs",
+          "originalSha256": "3f967d97a5b2ab64f2cb21d2de24b2d890e514139ac53c13cbcfaa3ef4eab93d"
+        },
+        {
+          "file": "duty-core.js",
+          "originalSha256": "47b05e0b7d2a437fe5dad5a24d433c30256bb8a412505f082d23da9aed96c8b7"
+        },
+        {
+          "file": "verify-upgrade.cjs",
+          "originalSha256": "685e0438ff0ea5efd836596067c5a50365f6f2f6d57c21525b556e4dbe82506b"
+        },
+        {
+          "file": "verify-person-rules.cjs",
+          "originalSha256": "d01258c7f0df72db19b93cf78444831639e47b126fc3646eb723cdd2d464b054"
+        },
+        {
+          "file": "verify-modes.cjs",
+          "originalSha256": "04c3158d121b0767d7346c7dd62a7df5e779757a0d53da83596cf8e4dd3347a8"
+        },
+        {
+          "file": "verify-unassigned.cjs",
+          "originalSha256": "bc2c72207a24e55b6fe96c6cda602376dea3cea3e0ef80d0ab3f85fa18b4b0e8"
+        },
+        {
+          "file": "교체및변경안내.md",
+          "originalSha256": "9ccaf54187405e343ea77fc0e56cfebc0096c84a18d92a0a1b26b01ba2225010"
+        }
+      ]
     }
   ]
 }

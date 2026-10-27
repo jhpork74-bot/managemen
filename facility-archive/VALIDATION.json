@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-27T12:34:24.616Z",
+  "checkedAt": "2026-10-27T12:56:09.015Z",
   "scope": "JavaScript syntax and mocked Node tests only",
   "results": [
     {
@@ -64,6 +64,36 @@
     },
     {
       "version": "v4.4.5",
+      "test": "verify-upgrade.cjs",
+      "passed": true,
+      "output": "PASS core: affiliation migration/filtering/transfer, daily two-person rows, holiday skip, cascade across months with past+other-site preservation, fixed lunch no rotation consumption.\nPASS server: 20th schedules following month, notice after commit, no duplicate event, trigger dedup, notification calendar fixed, atomic holiday failure and conflict guard, unknown data preserved. Google services mocked.\nPASS window backfill: missing previous/next months, existing center untouched, primary rotation aligned to existing center."
+    },
+    {
+      "version": "v4.4.6",
+      "test": "verify-modes.cjs",
+      "passed": true,
+      "output": "PASS new modes: eligible-only lunch, noneligible and fixed days consume no lunch rotation, continuity across months, fixed pairs persist into newly generated months, fixed→auto restores primary rotation, before-date and other-site preservation, invalid selection rejection."
+    },
+    {
+      "version": "v4.4.6",
+      "test": "verify-person-rules.cjs",
+      "passed": true,
+      "output": "PASS user examples: exact 8-person main/6-person annex sequence over November+December, Park Sora auto, Kim Eunju→Park Jeongho fixed only on own turns, annex Kim Eunmi/Lee Jeongseon auto, independent lunch cursors, substitute-only Park excluded from primary, applying lunch rules preserves all November primary assignments and pre-start snapshots.\nPASS starting staff: requested primary/lunch starts used in new month, existing November retained by default, explicit rebuild archived and site independent, cross-site starts rejected."
+    },
+    {
+      "version": "v4.4.6",
+      "test": "verify-storage.cjs",
+      "passed": true,
+      "output": "PASS: storage failure/commit/revision tests; monthly 2 of 4 = 50% in reporting sheet; 17-column site stock reporting; annex zero shortage despite total 8, transfer suggestion, site opt-out and limits. Google services mocked."
+    },
+    {
+      "version": "v4.4.6",
+      "test": "verify-unassigned.cjs",
+      "passed": true,
+      "output": "PASS unassigned fixed substitutes: selectable for both sites, inactive/other-site/self/empty rejected, affiliation unchanged, one-day and recurring/new-month persistence, primary and automatic pools unchanged, originals and other site preserved."
+    },
+    {
+      "version": "v4.4.6",
       "test": "verify-upgrade.cjs",
       "passed": true,
       "output": "PASS core: affiliation migration/filtering/transfer, daily two-person rows, holiday skip, cascade across months with past+other-site preservation, fixed lunch no rotation consumption.\nPASS server: 20th schedules following month, notice after commit, no duplicate event, trigger dedup, notification calendar fixed, atomic holiday failure and conflict guard, unknown data preserved. Google services mocked.\nPASS window backfill: missing previous/next months, existing center untouched, primary rotation aligned to existing center."
