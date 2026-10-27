@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "scope": "Local Edge and mocked Google RPC; no production deployment",
+  "checks": [
+    "lost ACK with same request ID",
+    "new edits during retry",
+    "canonical ACK before report work",
+    "report failure separate from canonical success",
+    "BUSY retry",
+    "offline draft and online recovery",
+    "conflict stops overwrite"
+  ]
+}
