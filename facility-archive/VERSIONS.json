@@ -352,6 +352,18 @@
           "originalSha256": "826b5f2b520d33243db3f4f702931f85d33dfa8d4e8373aa20ac03ec78ebfc34"
         }
       ]
+    },
+    {
+      "id": "v4.4.8",
+      "title": "당직 달력 이름만 표시",
+      "status": "로컬 확인 / 운영 확인 전",
+      "scope": "본관·분관 달력의 당직: 접두어만 제거",
+      "files": [
+        {
+          "file": "DutyManagementUI.html",
+          "originalSha256": "addbc801048093036dc47ec9233ec4eb94f1a6ee0c36a0fc5b1dce7cbe41a9df"
+        }
+      ]
     }
   ]
 }

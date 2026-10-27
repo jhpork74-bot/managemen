@@ -1,0 +1,10 @@
+{
+  "scope": "Local Edge browser regression with mocked Google RPC; label-only UI change",
+  "passed": true,
+  "dataChanged": false,
+  "checks": [
+    "Removed duty prefix from shared calendar renderer used for both sites",
+    "Existing duty browser regression passed including 360/390px no horizontal overflow"
+  ],
+  "inheritedFunctionalCoverage": "v4.4.7; server modules unchanged"
+}

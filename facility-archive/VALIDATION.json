@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-27T13:51:57.471Z",
+  "checkedAt": "2026-10-27T14:17:05.394Z",
   "scope": "JavaScript syntax and mocked Node tests only",
   "results": [
     {
@@ -139,6 +139,12 @@
       "test": "verify-upgrade.cjs",
       "passed": true,
       "output": "PASS core: affiliation migration/filtering/transfer, daily two-person rows, holiday skip, cascade across months with past+other-site preservation, fixed lunch no rotation consumption.\nPASS server: 20th schedules following month, notice after commit, no duplicate event, trigger dedup, notification calendar fixed, atomic holiday failure and conflict guard, unknown data preserved. Google services mocked.\nPASS window backfill: missing previous/next months, existing center untouched, primary rotation aligned to existing center."
+    },
+    {
+      "version": "v4.4.8",
+      "test": "UI label syntax and existing local browser regression",
+      "passed": true,
+      "scope": "No new test suite; existing regression executed; production deployment not performed"
     }
   ]
 }
