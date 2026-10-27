@@ -388,6 +388,34 @@
           "originalSha256": "ebb55ec1defb42c86938680c6f48cde4e3cf025a03d9e2809f5c6dffb47f85c3"
         }
       ]
+    },
+    {
+      "id": "v4.4.10",
+      "title": "당직변경화면·배치 이력",
+      "status": "로컬 검증 / 운영 확인 전",
+      "scope": "원본 기준표 보존, 신청 저장 즉시 별도 변경표 반영, 이전/현재 배치 이름 이력과 점심대체 동반 변경",
+      "files": [
+        {
+          "file": "Index.html",
+          "originalSha256": "1867823c173d334a9839675897a5b729b25d61b21054b9bcef93bcf1bf3aee7b"
+        },
+        {
+          "file": "DutyChanges.gs",
+          "originalSha256": "4c464d96e410c3fe298660686fc4d109bbcfb2a35934caac98c3c8cc276ae2ea"
+        },
+        {
+          "file": "DutyChangesUI.html",
+          "originalSha256": "14b57b78cbab963bf792b79f8f522718998a456d9b35e22f0c8f58003fa0c9c6"
+        },
+        {
+          "file": "duty-changes-core.js",
+          "originalSha256": "c1836d0823a4a2f72aecf6f67cd3939b6bdcd570106fac685592963eedfde3da"
+        },
+        {
+          "file": "verify-changes.cjs",
+          "originalSha256": "82b9b0f89940cd92783a433b196fc07736c3dbcf75e23c1c686d381b71833f56"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "scope": "Local Edge and mocked Google RPC; no production deployment",
+  "checks": [
+    "menu after duty management",
+    "automatic baseline display without original mutation",
+    "save immediately applies override",
+    "before/after primary and substitute pairs only",
+    "new primary without substitute clears old person",
+    "cancellation keeps history",
+    "360/390px no overflow"
+  ]
+}

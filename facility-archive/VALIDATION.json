@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-27T14:53:25.931Z",
+  "checkedAt": "2026-10-27T14:53:27.374Z",
   "scope": "JavaScript syntax and mocked Node tests only",
   "results": [
     {
@@ -184,6 +184,54 @@
     },
     {
       "version": "v4.4.9",
+      "test": "verify-upgrade.cjs",
+      "passed": true,
+      "output": "PASS core: affiliation migration/filtering/transfer, daily two-person rows, holiday skip, cascade across months with past+other-site preservation, fixed lunch no rotation consumption.\nPASS server: 20th schedules following month, notice after commit, no duplicate event, trigger dedup, notification calendar fixed, atomic holiday failure and conflict guard, unknown data preserved. Google services mocked.\nPASS window backfill: missing previous/next months, existing center untouched, primary rotation aligned to existing center."
+    },
+    {
+      "version": "v4.4.10",
+      "test": "verify-changes.cjs",
+      "passed": true,
+      "output": "PASS duty changes: read-only baseline view, full primary/substitute pair snapshots, incoming rule preview, removal of obsolete substitute, immediate override/history, cancellation retains history, no-op and invalid selection protection, original/unknown data preserved."
+    },
+    {
+      "version": "v4.4.10",
+      "test": "verify-delete.cjs",
+      "passed": true,
+      "output": "PASS delete/undo: exact month/site scope, original+staff+settings+other months untouched, archived undo, duplicate/invalid protection, automatic target and gap regeneration suppressed, manual regeneration re-enabled, root data+conflict protection. Mocked services only.\nPASS repeated generation: a fully written window is a read-only no-op even with a stale request revision."
+    },
+    {
+      "version": "v4.4.10",
+      "test": "verify-locks.cjs",
+      "passed": true,
+      "output": "PASS reliable storage: immediate canonical ACK; single batched slot write; lost-ACK idempotency; no-op and conflict checks; failed slot keeps commit; post-commit marker failure stays successful; deferred/coalesced reports and latest revision; shrinking payload; Calendar lease without canonical lock; worker dedup. Google APIs mocked."
+    },
+    {
+      "version": "v4.4.10",
+      "test": "verify-modes.cjs",
+      "passed": true,
+      "output": "PASS new modes: eligible-only lunch, noneligible and fixed days consume no lunch rotation, continuity across months, fixed pairs persist into newly generated months, fixed→auto restores primary rotation, before-date and other-site preservation, invalid selection rejection."
+    },
+    {
+      "version": "v4.4.10",
+      "test": "verify-person-rules.cjs",
+      "passed": true,
+      "output": "PASS user examples: exact 8-person main/6-person annex sequence over November+December, eligible main employee auto, fixed main pair fixed only on own turns, annex two annex employees auto, independent lunch cursors, substitute-only Park excluded from primary, applying lunch rules preserves all November primary assignments and pre-start snapshots.\nPASS starting staff: requested primary/lunch starts used in new month, existing November retained by default, explicit rebuild archived and site independent, cross-site starts rejected."
+    },
+    {
+      "version": "v4.4.10",
+      "test": "verify-storage.cjs",
+      "passed": true,
+      "output": "PASS: storage failure/commit/revision tests; monthly 2 of 4 = 50% in reporting sheet; 17-column site stock reporting; annex zero shortage despite total 8, transfer suggestion, site opt-out and limits. Google services mocked."
+    },
+    {
+      "version": "v4.4.10",
+      "test": "verify-unassigned.cjs",
+      "passed": true,
+      "output": "PASS unassigned fixed substitutes: selectable for both sites, inactive/other-site/self/empty rejected, affiliation unchanged, one-day and recurring/new-month persistence, primary and automatic pools unchanged, originals and other site preserved."
+    },
+    {
+      "version": "v4.4.10",
       "test": "verify-upgrade.cjs",
       "passed": true,
       "output": "PASS core: affiliation migration/filtering/transfer, daily two-person rows, holiday skip, cascade across months with past+other-site preservation, fixed lunch no rotation consumption.\nPASS server: 20th schedules following month, notice after commit, no duplicate event, trigger dedup, notification calendar fixed, atomic holiday failure and conflict guard, unknown data preserved. Google services mocked.\nPASS window backfill: missing previous/next months, existing center untouched, primary rotation aligned to existing center."
