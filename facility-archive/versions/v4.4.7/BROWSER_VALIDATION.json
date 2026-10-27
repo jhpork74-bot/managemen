@@ -1,0 +1,16 @@
+{
+  "scope": "Local Edge with mocked Google RPC; production deployment not performed",
+  "checks": [
+    "single request while disabled through data reload",
+    "failure restores button availability",
+    "building-specific employee editor",
+    "annex two targets share chronological candidate cursor",
+    "removing candidates by checkbox recalculates lunch only",
+    "legacy manual duplicate overrides cleared on explicit rule application",
+    "main site and primary dates preserved",
+    "next-month continuity",
+    "delete confirmation cancellation and undo",
+    "360/390px no horizontal overflow"
+  ],
+  "passed": true
+}

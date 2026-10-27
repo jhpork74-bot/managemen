@@ -219,7 +219,7 @@
     {
       "id": "v4.4.6",
       "title": "미배정 고정 대체자·달력 두 번째 줄 정리",
-      "status": "로컬 검증 / 운영 확인 전",
+      "status": "사용자 기능 확인 + 로컬 검증",
       "scope": "미배정 직원 고정 선택·소속 보존과 대체 필요일에만 달력 두 번째 줄 표시",
       "files": [
         {
@@ -278,6 +278,78 @@
         {
           "file": "교체및변경안내.md",
           "originalSha256": "9ccaf54187405e343ea77fc0e56cfebc0096c84a18d92a0a1b26b01ba2225010"
+        }
+      ],
+      "userConfirmation": {
+        "date": "2026-10-27",
+        "scope": "사용자가 직전 기능 구현의 동작을 확인했습니다. 전체 운영·실제 알림 무오류 보증이 아닙니다."
+      }
+    },
+    {
+      "id": "v4.4.7",
+      "title": "당직 전용 파일 분리·공통 대체 순번·중복 작성 방지",
+      "status": "로컬 검증 / 운영 확인 전",
+      "scope": "전용 GAS/HTML 모듈, 짧은 원본 잠금과 보고 갱신 분리, 작성/새로고침 단일 실행, 장소별 직원창, 분관 두 대상자의 공통 후보 순번·체크 선택, 조회 월 삭제/취소",
+      "files": [
+        {
+          "file": "Code.gs",
+          "originalSha256": "190bf55af9cffc60dbfd2fdd24f69a59f78671956118f8ac277de6c95fdae815"
+        },
+        {
+          "file": "FacilityStorage.gs",
+          "originalSha256": "30e5735a52371000ea885524a390bdc21cc1c58e1ed128cf8ea8007a3104c0ab"
+        },
+        {
+          "file": "DutyRosterCore.gs",
+          "originalSha256": "4f83287f10ee30a05043d428097737abb48e7b5d88d0392e0732f3f1102c7bf3"
+        },
+        {
+          "file": "DutyManagement.gs",
+          "originalSha256": "3cf7e5625eeaf7fae8130cf66c442176c750607604e679c1f512a47c13cc286c"
+        },
+        {
+          "file": "DutyManagementUI.html",
+          "originalSha256": "a83263ac5075dc621aa7215611b2568f2876a9813ecf1adcc7d459bec006bc85"
+        },
+        {
+          "file": "Index.html",
+          "originalSha256": "c39a078dc0120ea1c838f83bd3ed8fa1e1e8470c320963fc0d063ffb33f3e09b"
+        },
+        {
+          "file": "duty-core.js",
+          "originalSha256": "4f83287f10ee30a05043d428097737abb48e7b5d88d0392e0732f3f1102c7bf3"
+        },
+        {
+          "file": "verify-upgrade.cjs",
+          "originalSha256": "7328712253bde16a2b72188466565b70923dc9b452636839ff59796620571d62"
+        },
+        {
+          "file": "verify-person-rules.cjs",
+          "originalSha256": "d01258c7f0df72db19b93cf78444831639e47b126fc3646eb723cdd2d464b054"
+        },
+        {
+          "file": "verify-modes.cjs",
+          "originalSha256": "04c3158d121b0767d7346c7dd62a7df5e779757a0d53da83596cf8e4dd3347a8"
+        },
+        {
+          "file": "verify-unassigned.cjs",
+          "originalSha256": "bc2c72207a24e55b6fe96c6cda602376dea3cea3e0ef80d0ab3f85fa18b4b0e8"
+        },
+        {
+          "file": "verify-delete.cjs",
+          "originalSha256": "bcd5366cabdbedfc0a305d307d6bb39387a272dd85c999a8c440219f4c1ea468"
+        },
+        {
+          "file": "verify-storage.cjs",
+          "originalSha256": "61c579d6c2b328548603ef6668d2fd5dae489b8f6656472e667121cf9c473248"
+        },
+        {
+          "file": "verify-locks.cjs",
+          "originalSha256": "d8e226b3a0cf9c247d41937d562845bafdb9cbc05081d0b01ab2a37cde26ef3e"
+        },
+        {
+          "file": "분리설치안내.md",
+          "originalSha256": "826b5f2b520d33243db3f4f702931f85d33dfa8d4e8373aa20ac03ec78ebfc34"
         }
       ]
     }
