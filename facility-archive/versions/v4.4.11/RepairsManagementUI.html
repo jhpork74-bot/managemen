@@ -1,0 +1,177 @@
+<style>.repair-stats{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:16px}.repair-photo{max-width:220px;max-height:160px;object-fit:contain;border-radius:9px;margin-top:9px}.repair-details{flex:1;min-width:0}.repair-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.repair-pill{border-radius:20px;background:#edf4fa;color:#29445e;padding:4px 9px;font-size:12px}.repair-pill.done{background:#def5e5;color:#146c3d}.repair-note{white-space:pre-wrap;overflow-wrap:anywhere}.repair-actions{display:flex;gap:7px;flex-wrap:wrap}@media(max-width:700px){.repair-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}.repair-pill{background:#D80052;color:#315e56}.repair-card-grid,#repairList.repair-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;align-items:start;min-width:0;width:100%}.repair-card,#repairList .repair-card{position:relative;display:flex;flex-direction:column;gap:10px;aspect-ratio:auto;height:auto;min-height:0;min-width:0;width:100%;overflow:visible;padding:16px;border:1px solid #d8e6de;border-radius:14px;background:#fff;box-shadow:0 3px 11px #1d5a4712}.repair-card-title,#repairList .repair-card-title{display:block;font-size:19px;line-height:1.4;font-weight:800;overflow:visible;overflow-wrap:anywhere;white-space:normal;text-align:left;color:#24212a;margin:3px 0}.repair-card-date,.repair-card-meta{font-size:14px;line-height:1.5;color:#56746a;white-space:normal;overflow-wrap:anywhere}.repair-card-status{display:inline-block;align-self:flex-start;padding:5px 10px;border-radius:20px;font-size:14px;font-weight:700;line-height:1.5;height:auto;overflow:visible;background:#fff1dc;color:#8b5d23}.repair-card-status.complete{background:#e3f6e8;color:#197b48}.repair-card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;min-width:0}.repair-card-actions.repair-state-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.repair-state-choice{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px;border:1px solid #d8c9cf;border-radius:8px;font-size:14px;white-space:normal;cursor:pointer;margin:0}.repair-state-choice input{width:18px;height:18px;flex-shrink:0;margin:0;accent-color:#7b113a}.repair-state-choice.selected{background:#f9e9ef;border-color:#7b113a}.repair-state-choice.delete-choice{color:#a32236}.repair-card-actions.repair-dropdown-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:end}.repair-inline-field{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:14px;font-weight:600;margin:0}.repair-card .repair-inline-field select{box-sizing:border-box;width:100%;min-width:0;min-height:44px;font-size:16px;padding:10px 28px 10px 10px}.repair-card .repair-delete-button{grid-column:1/-1;width:100%;min-height:44px;font-size:15px;padding:10px;border:1px solid #e9b8c3;border-radius:8px;color:#9c2140;background:white}.repair-card-photo{width:100%;max-height:160px;object-fit:contain;border-radius:8px}
+@media(max-width:700px){.repair-card-grid,#repairList.repair-card-grid{grid-template-columns:1fr;gap:12px}.repair-card,#repairList .repair-card{padding:16px;gap:10px}.repair-card-title,#repairList .repair-card-title{font-size:18px;line-height:1.4}.repair-card-date,.repair-card-status{font-size:14px}}
+@media(max-width:380px){.repair-card-actions.repair-dropdown-actions{grid-template-columns:1fr}}
+#repairDialog{width:min(920px,94vw);max-height:92dvh;overflow:auto}
+#repairDialog .repair-work-photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#repairDialog .repair-photo-slot{min-width:0;margin:0;padding:12px;border:1px solid #cadbd4;border-radius:10px}
+#repairDialog .repair-photo-slot legend{font-size:16px;font-weight:700}
+#repairDialog .repair-photo-buttons{display:flex;flex-wrap:wrap;gap:7px}
+#repairDialog .repair-photo-buttons button{min-height:44px;white-space:normal}
+#repairDialog .repair-photo-link{display:block;width:100%;padding:0;border:0;background:transparent}
+#repairDialog .repair-photo{width:100%;max-width:260px;max-height:180px;object-fit:contain}
+#repairDialog [data-photo-status]{font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+#repairDialog .repair-gallery-needed{outline:3px solid #d48a16;outline-offset:2px}
+#repairSaveStatus{font-size:14px;line-height:1.5;overflow-wrap:anywhere;flex-basis:100%}
+#repairLegacyPhoto{padding-top:12px}
+#repairPhotoViewer{width:min(960px,94vw);max-height:92dvh;overflow:auto}
+#repairPhotoViewer img{display:block;max-width:100%;max-height:75dvh;margin:auto;object-fit:contain}
+@media(max-width:700px){#repairDialog .repair-work-photos{grid-template-columns:1fr}#repairDialog{padding:16px}#repairDialog .formgrid{grid-template-columns:minmax(0,1fr)}#repairDialog .full{grid-column:1/-1}}
+</style>
+<section id="repairs" class="hidden"><div class="panel"><div class="toolbar"><h2>🛠️ 고장·공사 관리</h2><div class="flex"><button id="repairFaultMode" class="primary" type="button">🔧 고장난 곳</button><button id="repairWorkMode" type="button">🏗️ 공사처리</button></div></div><p class="mutedtext" id="repairHelp">고장 위치, 사진, 담당자 및 조치 현황을 기록합니다.</p><div class="toolbar"><input id="repairSearch" placeholder="장소·제목·담당자 검색" aria-label="고장 및 공사 검색"><button id="repairAdd" class="primary" type="button">+ 고장 항목 추가</button></div><div class="stats repair-stats" id="repairStats"></div><div class="repair-card-grid" id="repairList"></div></div></section><dialog id="repairDialog"><form id="repairForm"><h2 id="repairDialogTitle">고장 등록</h2><input id="repairId" type="hidden"><div class="formgrid"><div class="full"><label for="repairTitle">고장 위치 / 공사명 *</label><input id="repairTitle" required style="width:100%" maxlength="140" placeholder="예: 본관 1층 복도 누수"></div><div><label for="repairSite">장소</label><select id="repairSite" style="width:100%"><option>복지관 본관</option><option>복지관 분관</option><option>기타</option></select></div><div><label for="repairDate">접수일</label><input id="repairDate" type="date" style="width:100%"></div><div class="full fault-field"><fieldset class="repair-photo-slot " data-photo-slot="fault"><legend>고장 사진</legend><div class="repair-photo-buttons"><button type="button" data-camera="fault">📷 사진 촬영</button><button type="button" data-gallery="fault">🖼️ 갤러리에서 선택</button><button type="button" data-photo-remove="fault">사진 삭제</button></div><input type="file" accept="image/*" capture="environment" id="repairCamera-fault" hidden><input type="file" accept="image/*" id="repairGallery-fault" hidden><p data-photo-status="fault" role="status" class="mutedtext"></p><div data-photo-preview="fault"></div></fieldset></div><div class="full work-field hidden"><p class="mutedtext">사진 버튼을 누르면 카메라 촬영을 우선 요청합니다. 취소 후 갤러리가 자동으로 열리지 않으면 ‘갤러리에서 선택’을 눌러 주세요.</p><div class="repair-work-photos"><fieldset class="repair-photo-slot " data-photo-slot="before"><legend>공사 전</legend><div class="repair-photo-buttons"><button type="button" data-camera="before">📷 사진 촬영</button><button type="button" data-gallery="before">🖼️ 갤러리에서 선택</button><button type="button" data-photo-remove="before">사진 삭제</button></div><input type="file" accept="image/*" capture="environment" id="repairCamera-before" hidden><input type="file" accept="image/*" id="repairGallery-before" hidden><p data-photo-status="before" role="status" class="mutedtext"></p><div data-photo-preview="before"></div></fieldset><fieldset class="repair-photo-slot " data-photo-slot="during"><legend>공사 중</legend><div class="repair-photo-buttons"><button type="button" data-camera="during">📷 사진 촬영</button><button type="button" data-gallery="during">🖼️ 갤러리에서 선택</button><button type="button" data-photo-remove="during">사진 삭제</button></div><input type="file" accept="image/*" capture="environment" id="repairCamera-during" hidden><input type="file" accept="image/*" id="repairGallery-during" hidden><p data-photo-status="during" role="status" class="mutedtext"></p><div data-photo-preview="during"></div></fieldset><fieldset class="repair-photo-slot " data-photo-slot="after"><legend>공사 후</legend><div class="repair-photo-buttons"><button type="button" data-camera="after">📷 사진 촬영</button><button type="button" data-gallery="after">🖼️ 갤러리에서 선택</button><button type="button" data-photo-remove="after">사진 삭제</button></div><input type="file" accept="image/*" capture="environment" id="repairCamera-after" hidden><input type="file" accept="image/*" id="repairGallery-after" hidden><p data-photo-status="after" role="status" class="mutedtext"></p><div data-photo-preview="after"></div></fieldset></div><div id="repairLegacyPhoto"></div></div><div class="fault-field"><label for="repairOwner">담당자 또는 업체</label><input id="repairOwner" style="width:100%" maxlength="100"></div><div class="fault-field"><label for="repairMaterials">재료 구비</label><select id="repairMaterials" style="width:100%"><option>미확인</option><option>구비 필요</option><option>구비 중</option><option>구비 완료</option><option>불필요</option></select></div><div class="fault-field"><label for="repairDone">조치 상태</label><select id="repairDone" style="width:100%"><option>미완료</option><option>조치 중</option><option>조치완료</option></select></div><div class="work-field hidden"><label for="repairQuote">업체 견적서 상황</label><select id="repairQuote" style="width:100%"><option>견적 요청 전</option><option>견적 요청</option><option>견적 대기</option><option>견적 수령</option><option>견적 검토 중</option><option>견적 확정</option></select></div><div class="work-field hidden"><label for="repairDue">공사 예정일자</label><input id="repairDue" type="date" style="width:100%"></div><div class="work-field hidden"><label for="repairBudget">예산 (원)</label><input id="repairBudget" type="number" min="0" step="1" placeholder="예: 1500000" style="width:100%"></div><div class="work-field hidden"><label for="repairFunding">자금 출처 (직접 입력)</label><input id="repairFunding" type="text" maxlength="150" placeholder="예: 시설운영비 / 기능보강사업비 / 지정후원금" style="width:100%"></div><div class="work-field hidden"><label for="repairWorkStatus">공사 상태</label><select id="repairWorkStatus" style="width:100%"><option>미완료</option><option>진행 중</option><option>완료</option></select></div><div class="full"><label for="repairNote">내용 및 비고</label><textarea id="repairNote" placeholder="고장 증상, 공사 내용, 특이사항 등을 기록하세요"></textarea></div></div><div class="flex" style="justify-content:flex-end;margin-top:18px"><button id="repairCancel" type="button">취소</button><p id="repairSaveStatus" role="status"></p><button id="repairSubmit" type="submit" class="primary">저장</button></div></form></dialog>
+<script>
+var RepairPhotosCore=(function(){
+ 'use strict';
+ function read(record){const saved=record.workPhotos&&typeof record.workPhotos==='object'&&!Array.isArray(record.workPhotos)?record.workPhotos:{};return {fault:typeof record.photo==='string'?record.photo:'',before:typeof saved.before==='string'?saved.before:'',during:typeof saved.during==='string'?saved.during:'',after:typeof saved.after==='string'?saved.after:''}}
+ function merge(previous,draft){return {...(previous&&typeof previous==='object'&&!Array.isArray(previous)?previous:{}),before:draft.before||'',during:draft.during||'',after:draft.after||''}}
+ function imageSource(value){return typeof value==='string'&&(/^(data:image\/(jpeg|png|webp|gif);base64,|https:\/\/)/i.test(value))?value:''}
+ return {read,merge,imageSource};
+})();
+
+
+$('stock').before($('repairs'));
+// 고장·공사 관리: 기존 점검 및 업무 데이터와 독립적으로 저장
+let repairMode='fault',repairPhotos={},repairSession=0,repairProcessing=0,repairSaving=false,repairCameraPending=null;
+function repairCurrency(n){return Number(n||0).toLocaleString('ko-KR')+'원'}
+function repairStatus(x){return x.kind==='fault'?(x.done||'미완료'):(x.workStatus||'미완료')}
+function setRepairMode(mode){repairMode=mode;$('repairFaultMode').classList.toggle('primary',mode==='fault');$('repairWorkMode').classList.toggle('primary',mode==='work');$('repairHelp').textContent=mode==='fault'?'고장 위치·사진·담당자·재료 구비·조치완료 여부를 관리합니다.':'공사명·견적서·예산·진행 상태와 공사 전·중·후 사진을 관리합니다.';$('repairAdd').textContent=mode==='fault'?'+ 고장 항목 추가':'+ 공사 항목 추가';renderRepairs()}
+$('repairFaultMode').onclick=()=>setRepairMode('fault');$('repairWorkMode').onclick=()=>setRepairMode('work');$('repairSearch').oninput=renderRepairs;$('repairAdd').onclick=()=>openRepair();$('repairCancel').onclick=()=>{if(!repairSaving)$('repairDialog').close()};
+function renderRepairs(){
+ const q=$('repairSearch').value.trim().toLowerCase();
+ const rows=(data.repairs||[]).filter(x=>x.kind===repairMode&&[x.title,x.site,x.owner,x.note].join(' ').toLowerCase().includes(q)).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+ const all=(data.repairs||[]).filter(x=>x.kind===repairMode),completed=all.filter(x=>['조치완료','완료'].includes(repairStatus(x))).length;
+ $('repairStats').innerHTML=[['전체 등록',all.length+'건'],['처리 완료',completed+'건'],['미완료·진행 중',(all.length-completed)+'건']].map(([k,v])=>`<div class="stat">${k}<b>${v}</b></div>`).join('');
+ $('repairList').innerHTML=rows.length?rows.map(x=>{
+  const current=repairStatus(x),complete=['조치완료','완료'].includes(current);
+  const materialOptions=['미확인','구비 필요','구비 중','구비 완료','불필요'];
+  const stateOptions=x.kind==='fault'?['미완료','조치 중','조치완료']:['미완료','진행 중','완료'];
+  const selectOptions=(values,selected)=>values.map(v=>`<option value="${esc(v)}" ${v===selected?'selected':''}>${esc(v)}</option>`).join('');
+  return `<article class="repair-card" role="button" tabindex="0" aria-label="${esc(x.title)} 상세 수정" data-repair-card="${esc(x.id)}">
+    <span class="repair-card-status ${complete?'complete':''}">${esc(current)}</span>
+    <div class="repair-card-date">📅 ${esc(x.kind==='work'?(x.due||x.date||'날짜 미정'):(x.date||'접수일 미정'))}</div>
+    <div class="repair-card-title" title="${esc(x.title)}">${esc(x.title)}</div>
+    <div class="repair-card-actions repair-dropdown-actions">
+      ${x.kind==='fault'?`<label class="repair-inline-field">재료 구비<select data-repair-materials="${esc(x.id)}" aria-label="${esc(x.title)} 재료 구비">${selectOptions(materialOptions,x.materials||'미확인')}</select></label>`:`<label class="repair-inline-field">견적 상황<select data-repair-quote="${esc(x.id)}" aria-label="${esc(x.title)} 견적 상황">${selectOptions(['견적 요청 전','견적 요청','견적 대기','견적 수령','견적 검토 중','견적 확정'],x.quote||'견적 요청 전')}</select></label>`}
+      <label class="repair-inline-field">${x.kind==='fault'?'조치 상태':'공사 상태'}<select data-repair-status="${esc(x.id)}" aria-label="${esc(x.title)} ${x.kind==='fault'?'조치 상태':'공사 상태'}">${selectOptions(stateOptions,current)}</select></label>
+      <button type="button" class="repair-delete-button" data-repair-remove="${esc(x.id)}">삭제</button>
+    </div>
+  </article>`
+ }).join(''):'<p class="mutedtext">등록된 내역이 없습니다. 추가 버튼을 눌러 등록하세요.</p>';
+ document.querySelectorAll('#repairList [data-repair-card]').forEach(card=>{
+  card.onclick=e=>{if(e.target.closest('button, input, select, label'))return;openRepair(card.dataset.repairCard)};
+  card.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&e.target===card){e.preventDefault();openRepair(card.dataset.repairCard)}}
+ });
+ document.querySelectorAll('#repairList [data-repair-materials]').forEach(el=>el.onchange=()=>{
+  const x=data.repairs.find(r=>r.id===el.dataset.repairMaterials&&r.kind==='fault');
+  if(!x)return;x.materials=el.value;save();renderRepairs();
+ });
+ document.querySelectorAll('#repairList [data-repair-quote]').forEach(el=>el.onchange=()=>{
+  const x=data.repairs.find(r=>r.id===el.dataset.repairQuote&&r.kind==='work');
+  if(!x)return;x.quote=el.value;save();renderRepairs();
+ });
+ document.querySelectorAll('#repairList [data-repair-status]').forEach(el=>el.onchange=()=>{
+  const x=data.repairs.find(r=>r.id===el.dataset.repairStatus);
+  if(!x)return;
+  if(x.kind==='fault')x.done=el.value;else x.workStatus=el.value;
+  save();renderRepairs();
+ });
+ document.querySelectorAll('#repairList [data-repair-remove]').forEach(el=>el.onclick=()=>{
+  const x=data.repairs.find(r=>r.id===el.dataset.repairRemove);
+  if(x&&confirm('['+x.title+'] 기록을 삭제하시겠습니까?\\n삭제 후에는 되돌릴 수 없습니다.')){
+   data.repairs=data.repairs.filter(r=>r.id!==x.id);save();renderRepairs();
+  }
+ });
+
+}
+function openRepair(id){
+ const x=(data.repairs||[]).find(r=>r.id===id)||{id:'',kind:repairMode,title:'',site:'복지관 본관',date:TODAY,photo:'',owner:'',materials:'미확인',done:'미완료',quote:'견적 요청 전',due:'',budget:'',funding:'',workStatus:'미완료',note:''};
+ $('repairDialogTitle').textContent=(repairMode==='fault'?'고장':'공사')+(id?' 수정':' 등록');
+ $('repairId').value=x.id;$('repairTitle').value=x.title;$('repairSite').value=x.site||'기타';$('repairDate').value=x.date||TODAY;$('repairOwner').value=x.owner||'';$('repairMaterials').value=x.materials||'미확인';$('repairDone').value=x.done||'미완료';$('repairQuote').value=x.quote||'견적 요청 전';$('repairDue').value=x.due||'';$('repairBudget').value=x.budget??'';$('repairFunding').value=x.funding||'';$('repairWorkStatus').value=x.workStatus||'미완료';$('repairNote').value=x.note||'';
+ repairSession++;repairProcessing=0;repairCameraPending=null;repairPhotos=RepairPhotosCore.read(x);document.querySelectorAll('#repairDialog input[type=file]').forEach(el=>el.value='');document.querySelectorAll('[data-photo-status]').forEach(el=>el.textContent='');$('repairSaveStatus').textContent='';repairPhotoPreview();repairSetBusy();
+ document.querySelectorAll('.fault-field').forEach(el=>el.classList.toggle('hidden',repairMode!=='fault'));document.querySelectorAll('.work-field').forEach(el=>el.classList.toggle('hidden',repairMode!=='work'));
+ $('repairDialog').showModal();
+}
+function repairSetBusy(){
+ const blocked=repairSaving||repairProcessing>0;
+ $('repairSubmit').disabled=blocked;$('repairCancel').disabled=repairSaving;
+ document.querySelectorAll('#repairDialog button[data-camera],#repairDialog button[data-gallery],#repairDialog button[data-photo-remove]').forEach(el=>el.disabled=blocked);
+ // Freeze editable fields only while waiting for the server so a confirmed snapshot matches the form.
+ document.querySelectorAll('#repairDialog input:not([type=file]),#repairDialog select,#repairDialog textarea').forEach(el=>el.disabled=repairSaving);
+}
+function repairSlotStatus(key,text){document.querySelector('[data-photo-status="'+key+'"]').textContent=text}
+function repairPhotoPreview(){
+ for(const key of ['fault','before','during','after']){
+  const src=RepairPhotosCore.imageSource(repairPhotos[key]);
+  document.querySelector('[data-photo-preview="'+key+'"]').innerHTML=src?'<button type="button" class="repair-photo-link" data-view-photo="'+key+'" aria-label="사진 크게 보기"><img class="repair-photo" src="'+esc(src)+'" alt="'+({fault:'고장',before:'공사 전',during:'공사 중',after:'공사 후'}[key])+' 사진 미리보기"></button>':'<p class="mutedtext">등록된 사진 없음</p>';
+ }
+ const old=(data.repairs||[]).find(r=>r.id===$('repairId').value),legacy=repairMode==='work'&&old&&RepairPhotosCore.imageSource(old.photo);
+ $('repairLegacyPhoto').innerHTML=legacy?'<p>기존 사진 (단계 미지정·보존)</p><button type="button" class="repair-photo-link" data-view-photo="legacy"><img class="repair-photo" src="'+esc(legacy)+'" alt="기존 공사 사진"></button>':'';
+ document.querySelectorAll('#repairDialog [data-view-photo]').forEach(button=>button.onclick=()=>{
+  let viewer=$('repairPhotoViewer');if(!viewer){viewer=document.createElement('dialog');viewer.id='repairPhotoViewer';viewer.innerHTML='<form method="dialog"><button>닫기</button></form><img alt="첨부 사진 확대">';document.body.appendChild(viewer)}
+  const source=button.dataset.viewPhoto==='legacy'?legacy:RepairPhotosCore.imageSource(repairPhotos[button.dataset.viewPhoto]);viewer.querySelector('img').src=source;viewer.showModal();
+ });
+}
+function repairChoosePhoto(key,camera){
+ if(repairSaving||repairProcessing||!$('repairDialog').open)return;
+ const input=$((camera?'repairCamera-':'repairGallery-')+key);input.value='';
+ repairCameraPending=camera?{key,session:repairSession}:null;
+ document.querySelector('[data-gallery="'+key+'"]').classList.remove('repair-gallery-needed');
+ if(camera)repairSlotStatus(key,'카메라를 열도록 요청했습니다. 촬영을 취소하면 갤러리에서 선택할 수 있습니다.');
+ try{input.click()}catch(error){repairShowGallery(key,false)}
+}
+function repairShowGallery(key,tryAutomatic){
+ repairCameraPending=null;
+ if(!$('repairDialog').open)return;
+ const button=document.querySelector('[data-gallery="'+key+'"]');button.classList.add('repair-gallery-needed');
+ repairSlotStatus(key,'촬영이 취소되었거나 선택된 사진이 없습니다. 갤러리에서 사진을 선택해 주세요. 기존 사진은 유지됩니다.');
+ const input=$('repairGallery-'+key);input.value='';
+ // Opening another native picker may require a fresh user gesture. Never loop on cancellation.
+ if(tryAutomatic&&navigator.userActivation&&navigator.userActivation.isActive&&typeof input.showPicker==='function'){
+  try{input.showPicker();return}catch(error){/* Explicit gallery button remains available. */}
+ }
+ button.focus({preventScroll:true});
+}
+async function repairLoadPhoto(key,input){
+ const file=input.files&&input.files[0];repairCameraPending=null;if(!file)return;
+ const session=repairSession;repairProcessing++;repairSetBusy();repairSlotStatus(key,'사진을 축소하고 있습니다…');
+ try{
+  if(!file.type.startsWith('image/'))throw Error('이미지 파일을 선택하세요.');
+  const url=URL.createObjectURL(file),img=new Image();
+  try{await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(Error('사진을 읽을 수 없습니다. JPG 또는 PNG 사진을 선택하세요.'));img.src=url})}finally{URL.revokeObjectURL(url)}
+  const canvas=document.createElement('canvas'),scale=Math.min(1,960/Math.max(img.width,img.height));canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+  let photo='';for(const quality of [.65,.45,.3]){photo=canvas.toDataURL('image/jpeg',quality);if(photo.length<115000)break}
+  if(photo.length>160000)throw Error('사진이 큽니다. 더 작은 사진을 선택하세요.');
+  if(session!==repairSession||!$('repairDialog').open)return;
+  repairPhotos[key]=photo;repairPhotoPreview();repairSlotStatus(key,'사진이 준비되었습니다. 아래 저장을 눌러 반영하세요.');
+ }catch(error){if(session===repairSession&&$('repairDialog').open)repairSlotStatus(key,'사진 처리 실패: '+error.message+' 기존 사진은 유지됩니다.')}
+ finally{input.value='';if(session===repairSession){repairProcessing--;repairSetBusy()}}
+}
+for(const key of ['fault','before','during','after']){
+ document.querySelector('[data-camera="'+key+'"]').onclick=()=>repairChoosePhoto(key,true);
+ document.querySelector('[data-gallery="'+key+'"]').onclick=()=>repairChoosePhoto(key,false);
+ document.querySelector('[data-photo-remove="'+key+'"]').onclick=()=>{if(repairSaving||repairProcessing)return;repairPhotos[key]='';repairPhotoPreview();repairSlotStatus(key,'사진 삭제가 준비되었습니다. 저장을 눌러 반영하세요.')};
+ $('repairCamera-'+key).onchange=e=>repairLoadPhoto(key,e.target);
+ $('repairGallery-'+key).onchange=e=>repairLoadPhoto(key,e.target);
+ $('repairCamera-'+key).addEventListener('cancel',()=>{if(repairCameraPending&&repairCameraPending.key===key&&repairCameraPending.session===repairSession)repairShowGallery(key,true)});
+ $('repairGallery-'+key).addEventListener('cancel',()=>repairSlotStatus(key,'갤러리 선택을 취소했습니다. 기존 사진은 유지됩니다.'));
+}
+// Older mobile browsers may not emit input.cancel. Returning to the app exposes the gallery button.
+function repairCameraReturn(){const pending=repairCameraPending;if(!pending)return;setTimeout(()=>{if(repairCameraPending===pending&&pending.session===repairSession&&!repairProcessing)repairShowGallery(pending.key,false)},800)}
+window.addEventListener('focus',repairCameraReturn);document.addEventListener('visibilitychange',()=>{if(!document.hidden)repairCameraReturn()});
+$('repairDialog').addEventListener('cancel',event=>{if(repairSaving)event.preventDefault()});
+$('repairDialog').addEventListener('close',()=>{repairSession++;repairProcessing=0;repairCameraPending=null});
+
+$('repairForm').onsubmit=async e=>{
+ e.preventDefault();if(repairSaving||repairProcessing)return;if(!cloudReady||cloudBlocked){alert('구글시트 연결을 확인하세요.');return}
+ const id=$('repairId').value,idx=data.repairs.findIndex(x=>x.id===id),old=idx>=0?data.repairs[idx]:{};
+ const x={...old,id:id||uid(),kind:repairMode,title:$('repairTitle').value.trim(),site:$('repairSite').value,date:$('repairDate').value||TODAY,note:$('repairNote').value.trim()};
+ if(repairMode==='fault')Object.assign(x,{photo:repairPhotos.fault,owner:$('repairOwner').value.trim(),materials:$('repairMaterials').value,done:$('repairDone').value});
+ else Object.assign(x,{quote:$('repairQuote').value,due:$('repairDue').value,budget:Number($('repairBudget').value||0),funding:$('repairFunding').value.trim(),workStatus:$('repairWorkStatus').value});
+ if(repairMode==='work')x.workPhotos=RepairPhotosCore.merge(old.workPhotos,repairPhotos);
+ if(!x.title)return;
+ const prospective=[...data.repairs];if(idx>=0)prospective[idx]=x;else prospective.push(x);
+ if(JSON.stringify({...data,repairs:prospective}).length>1700000){alert('구글시트 저장 용량 한도에 가까워 등록할 수 없습니다. 사진을 줄이거나 백업 후 오래된 사진을 삭제해 주세요.');return}
+ data.repairs=prospective;repairSaving=true;repairSetBusy();$('repairSaveStatus').textContent='서버 저장 중…';try{await saveAndWait();$('repairDialog').close();renderRepairs()}catch(error){$('repairSaveStatus').textContent='저장 완료를 확인하지 못했습니다. '+error.message+' · 상단 저장 상태를 확인하세요. 입력 내용은 유지됩니다.'}finally{repairSaving=false;repairSetBusy()}
+};
+
+
+</script>

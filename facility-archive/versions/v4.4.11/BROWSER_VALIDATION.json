@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "scope": "Local Edge / mocked Google RPC. Actual camera, gallery OS transitions and production deployment NOT verified.",
+  "checks": [
+    "before/during/after compressed persisted photos",
+    "legacy photo and unknown fields preserved",
+    "camera capture environment and gallery without capture",
+    "cancel exposes gallery fallback",
+    "photo removal and editor cancellation",
+    "invalid image preserves previous photo",
+    "ACK failure retains editor",
+    "360/390px no overflow",
+    "duty change regression",
+    "lost ACK, offline and version conflict regression"
+  ]
+}

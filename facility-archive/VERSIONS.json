@@ -416,6 +416,66 @@
           "originalSha256": "82b9b0f89940cd92783a433b196fc07736c3dbcf75e23c1c686d381b71833f56"
         }
       ]
+    },
+    {
+      "id": "v4.4.11",
+      "title": "고장·공사관리 분리 / 공사 전·중·후 사진",
+      "status": "로컬 검증 / 운영 확인 전",
+      "scope": "기존 사진 보존, 공사 단계별 사진, 카메라 우선 요청·취소 후 갤러리 대안, 전용 UI·스크립트 분리",
+      "files": [
+        {
+          "file": "Index.html",
+          "originalSha256": "86d1cdb19c16f44765cffd41bf895901b6159a33cfb5341055f9c6a6cfda71c8"
+        },
+        {
+          "file": "RepairsManagement.gs",
+          "originalSha256": "78875d79d6a6eefd097177e25085d43b5951fe1790ef64f4a0cefc4e15a93b9d"
+        },
+        {
+          "file": "RepairsManagementUI.html",
+          "originalSha256": "42e6dbe1853a1a192ad55c228c04219aefbcb1e1705cee1215d9fb861f0cb913"
+        },
+        {
+          "file": "repairs-core.js",
+          "originalSha256": "71478496a820df2fc205f32c1c570d844e340188cc571bea4ace51b63885010e"
+        },
+        {
+          "file": "repairs-ui.js",
+          "originalSha256": "6aa50cd7d30e5388e5b3ba47d8856ac8b577d30644727ef6216bca7f36e79542"
+        },
+        {
+          "file": "repairs.css",
+          "originalSha256": "f63f972cef287bcd2cb60001acc80d59e8b49a1525d740c16fc6516c2e4323ce"
+        },
+        {
+          "file": "repairs-markup.html",
+          "originalSha256": "110d13012f3d2e8876f714f249de40ab03d6f133db73fe28a81d831f1d99cd8a"
+        },
+        {
+          "file": "build-repairs.cjs",
+          "originalSha256": "0d893751e33b9db5b50a2aff17c402bd614a1ce0ea71aa0ef653ce92c0e07f08"
+        },
+        {
+          "file": "verify-repairs.cjs",
+          "originalSha256": "b5b33314d3c55a0ed5fe0b834642ebed380cfe96e8c63fed38b01e7f5d59e7b9"
+        },
+        {
+          "file": "verify-repairs-browser.cjs",
+          "originalSha256": "6aba473f5af245196b88b3cd9c6ab6c17e068d0a91fde3fce52e163f8b625b04"
+        },
+        {
+          "file": "verify-save-browser.cjs",
+          "originalSha256": "20f609826231b2673b327089ab4e2bf8157036478c05ba64c9b69069830778b1"
+        },
+        {
+          "file": "verify-changes-browser.cjs",
+          "originalSha256": "2fcf5f40e3d8f01c6fe939062c8285e087d577fe400cf54dc21a5f3f867ee868"
+        },
+        {
+          "file": "설치및사진사용안내.md",
+          "originalSha256": "1385c2d75eb6e4aa8ce5ae1d54dab30d0bf74b31052c8ba8bf68180e17bc6e1d"
+        }
+      ]
     }
   ]
 }
