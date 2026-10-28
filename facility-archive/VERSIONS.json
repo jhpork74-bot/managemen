@@ -609,6 +609,86 @@
           "originalSha256": "acab554f53581d38c6021a5a417bc3a23de74992aabcf0677158a97aa146dd7c"
         }
       ]
+    },
+    {
+      "id": "v4.4.15",
+      "title": "한 건씩 변경 복구·공통 팝업 바깥 클릭 닫기",
+      "status": "로컬·모의 전송 검증 / 실제 잔디·운영 확인 전",
+      "scope": "현재 장소·월 최신 변경 1건씩 복구, 당직자/점심대체·이력 보존, 공통 팝업 바깥 클릭 닫기와 미저장/저장중 보호",
+      "files": [
+        {
+          "file": "Index.html",
+          "originalSha256": "b214d7fdf89a75697a8c49aa08f4a54a63089d4c4f4b7fe41fc036906992de13"
+        },
+        {
+          "file": "DutyChanges.gs",
+          "originalSha256": "9e8eab35afccae639aef0ce1dd040389608b5429a1af856dacb8d2c91f73c84f"
+        },
+        {
+          "file": "DutyChangesUI.html",
+          "originalSha256": "4e8d1594e951b93002c4ac898d5d2abf1687864258364fdb0ae4393ee679c494"
+        },
+        {
+          "file": "duty-changes-core.js",
+          "originalSha256": "359e371a48bd51c48bde52af54fa62c4d212493bd6e98010218a17b2e8b860c5"
+        },
+        {
+          "file": "duty-changes-ui.js",
+          "originalSha256": "d28114f913f99e2b564530507a451ee408f657a257d76b8cfc5f7298939db084"
+        },
+        {
+          "file": "DutyManagementUI.html",
+          "originalSha256": "310bcac3f69d23f53b9537238da6ae3de0622b932866a2d2a470b59b75aa2a41"
+        },
+        {
+          "file": "ui.js",
+          "originalSha256": "e378c054129b5adcdfb4810432809834e1e2b7e6a37ba55eec7fda9d9013fcfc"
+        },
+        {
+          "file": "PopupBehavior.gs",
+          "originalSha256": "fb0750006de0144373ee9664763bde0d7d7fd4a90c2f53ed76c5a341a4aaecf3"
+        },
+        {
+          "file": "PopupBehaviorUI.html",
+          "originalSha256": "cafc004bc8ef538ffad270f54b62905ab92e02b763fc16d2675aad2b71b6ff45"
+        },
+        {
+          "file": "popup-behavior.js",
+          "originalSha256": "1dd4977d4d710bf3161b6c6fec0c0c1f1cbf057f419247a2028b1086fae0efa8"
+        },
+        {
+          "file": "build-popups.cjs",
+          "originalSha256": "0f50577577db08f413c8753f7cf602ea3432264bebf542f51406c98fb1a0ef4e"
+        },
+        {
+          "file": "verify-undo.cjs",
+          "originalSha256": "f70ec30ae909f4fcf0bf9607e93050292eee1be2aad85e91b742595622931d83"
+        },
+        {
+          "file": "verify-undo-popups-browser.cjs",
+          "originalSha256": "043aa83e9d32a1f7a03f0bc357ea6b3fd711dad0bb0a70fd62281d50c8251533"
+        },
+        {
+          "file": "verify-changes-browser.cjs",
+          "originalSha256": "2916c2217d1f49421c39b8ac66d594f79f6a8ef1d9f50f595e59d1662dabab6b"
+        },
+        {
+          "file": "verify-jandi-browser.cjs",
+          "originalSha256": "7556e8891df99af6d23c7e18ca68989050c6f3059bb20d2fd9cf685b6752aacb"
+        },
+        {
+          "file": "verify-save-browser.cjs",
+          "originalSha256": "081af6df73585f41c1cb1a85c4b039c147efce34025b2f04e57e459a96d5dca8"
+        },
+        {
+          "file": "verify-repairs-browser.cjs",
+          "originalSha256": "3510770b6ede5280905daca5fd79b664ceb4f472092dc69e4f162ecde415e28c"
+        },
+        {
+          "file": "복구_팝업닫기_설치안내.md",
+          "originalSha256": "04d6a6d9a6f9dc9b6d69c1411d04a058364847a3eed4acc548d783fc5b6d6173"
+        }
+      ]
     }
   ]
 }
