@@ -1,0 +1,12 @@
+{
+  "checkedDate": "2026-10-28",
+  "scope": "All files proposed for this version upload, including root validation and registry metadata",
+  "knownOperationalAndExampleNamePatternsChecked": 19,
+  "remainingMatches": 0,
+  "exampleNamePlaceholdersReplaced": true,
+  "operationalIdsRemoved": true,
+  "webhookCredentialsIncluded": false,
+  "operationalJsonOrImagesIncluded": false,
+  "filesChecked": 52,
+  "previousVersionFoldersModified": false
+}

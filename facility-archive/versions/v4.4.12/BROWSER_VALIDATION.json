@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "scope": "Local Edge / mocked Google and JANDI RPC. No production deployment or real JANDI message.",
+  "checks": [
+    "deep link opens requested site/month/date before initial data load",
+    "committed change ACK before notify",
+    "message delivery failure separate from save result",
+    "lost delivery response checked without a duplicate send",
+    "test and topic routing",
+    "save failure sends nothing",
+    "original duty preserved",
+    "360/390px",
+    "repair photos and cloud save regressions"
+  ]
+}

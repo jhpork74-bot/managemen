@@ -1,0 +1,353 @@
+<!-- 당직인원관리 전용 화면 -->
+<style>
+#dutyManagement .duty-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:15px}
+.duty-weekday{text-align:center;padding:8px;font-weight:bold;color:#466673}
+#dutyManagement .duty-day{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-height:115px;padding:10px;background:#fff;border:1px solid #d6e1e9;border-radius:8px;min-width:0;white-space:normal;overflow-wrap:anywhere;text-align:left}
+#dutyManagement .duty-day.duty-off{background:#f0f2f4;color:#7b838c;opacity:1;cursor:default}
+.duty-primary{font-size:16px;font-weight:bold;color:#174a68}.duty-lunch{font-size:13px;background:#fff0d5;color:#755522;padding:4px;border-radius:4px}
+.duty-holiday{font-size:12px;color:#a43a43}.duty-person-row,.duty-order-row{display:flex;gap:7px;align-items:center;margin:7px 0;flex-wrap:wrap}.duty-order-row span{flex:1;min-width:120px}
+#dutySettingsDialog{width:min(700px,95vw)}#dutyEmployeeDialog{width:min(650px,95vw)}
+#dutyManagement #dutyStatus{font-weight:600;line-height:1.6;padding:10px;background:#edf5fb;border-radius:8px}
+@media(max-width:700px){#dutyManagement .duty-calendar{gap:3px}#dutyManagement .duty-day{min-height:90px;padding:5px 2px;font-size:12px}.duty-primary{font-size:13px}.duty-lunch,.duty-holiday{font-size:11px}.duty-weekday{padding:5px 0;font-size:12px}#dutyManagement .flex button{min-height:44px}}
+.duty-month-panel{margin-top:24px;padding-top:8px;border-top:2px solid #d6e1e9}.duty-person-row button[aria-pressed="true"]{background:#176b9a;color:white}.duty-person-row input[aria-label="직원 이름"]{max-width:180px}#dutyManagement .duty-lunch{display:block;width:100%;box-sizing:border-box;margin-top:auto}
+#dutyEmployeeDialog{width:min(820px,95vw);max-height:85vh;overflow:auto}.duty-staff-group{margin:18px 0;padding:12px;border:2px solid #c8dfea;border-radius:12px}.duty-staff-group legend{font-size:20px;font-weight:700;color:#165777}.duty-staff-card{padding:12px;margin:10px 0;background:#f4f9fc;border-radius:10px}.duty-staff-name,.duty-start-choices,.duty-staff-lunch{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:8px 0}.duty-staff-name input[aria-label]{width:160px;max-width:100%}.duty-start-choices label{padding:8px;background:white;border:1px solid #c8dfea;border-radius:6px}.duty-staff-lunch select{min-height:42px}.duty-rule-row{padding:12px;margin:10px 0;border:1px solid #d6e1e9;border-radius:8px}.duty-rule-row strong{display:block;font-size:16px;margin-bottom:8px}#dutyEmployeeDialog textarea{width:100%;box-sizing:border-box}#dutyEmployeeDialog form>.flex:last-child{position:sticky;bottom:0;background:white;padding:12px 0;border-top:1px solid #ddd}@media(max-width:600px){.duty-staff-name input[aria-label]{width:140px}.duty-staff-group{padding:8px}.duty-staff-card{padding:8px}.duty-start-choices{gap:6px}.duty-staff-lunch label{width:100%;display:flex;align-items:center;justify-content:space-between}.duty-staff-lunch select{max-width:72%;font-size:14px}}
+
+</style>
+<script>
+var DutyRosterCore=(function(){
+ 'use strict';
+ const clone=x=>JSON.parse(JSON.stringify(x));
+ function validDate(value){if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;const d=new Date(value+'T12:00:00Z');return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===value}
+ function validMonth(value){return typeof value==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(value)}
+ function nextMonth(value){if(!validMonth(value))throw Error('월 형식 오류');const d=new Date(value+'-01T12:00:00Z');d.setUTCMonth(d.getUTCMonth()+1);return d.toISOString().slice(0,7)}
+ function normalize(raw){
+  const d=raw&&typeof raw==='object'?clone(raw):{};d.employees=Array.isArray(d.employees)?d.employees:[];d.sites=d.sites||{};
+  for(const site of ['one','two']){d.sites[site]=d.sites[site]||{};const s=d.sites[site];s.months=s.months||{};s.settings={regularOrder:[],lunchOrder:[],extraOffDates:[],autoEnabled:false,...(s.settings||{})}}
+  for(const e of d.employees){if(!['one','two'].includes(e.site)){const sites=['one','two'].filter(site=>d.sites[site].settings.regularOrder.includes(e.id)||d.sites[site].settings.lunchOrder.includes(e.id));e.site=sites.length===1?sites[0]:null}}
+  return d;
+ }
+ function activeEmployees(d,site){return d.employees.filter(e=>e.active!==false&&(!site||e.site===site))}
+ function fixedLunchEmployees(d,site){return activeEmployees(d).filter(e=>e.site===site||!e.site)}
+ function siteOrder(d,site,kind){const people=activeEmployees(d,site),allowed=new Set(people.map(e=>e.id));const saved=usableOrder(d,d.sites[site].settings[kind]).filter(id=>allowed.has(id));return kind==='regularOrder'?(saved.length?saved:people.filter(e=>e.regularEligible!==false).map(e=>e.id)):saved}
+ function shiftMonth(month,delta){const date=new Date(month+'-01T12:00:00Z');date.setUTCMonth(date.getUTCMonth()+delta);return date.toISOString().slice(0,7)}
+ function windowMonths(month){return [-1,0,1].map(n=>shiftMonth(month,n))}
+ function usableOrder(d,ids){const active=new Set(activeEmployees(d).map(e=>e.id));return [...new Set((ids||[]).filter(id=>active.has(id)))]}
+ function label(d,id){const employee=d.employees.find(e=>e.id===id);return employee?employee.name:'기존 직원'}
+ function policyAt(settings,date){return (settings.assignmentRules||[]).filter(r=>r.from<=date).sort((a,b)=>a.from.localeCompare(b.from)).pop()||null}
+ function validatePolicy(d,site,rule){
+  if(!validDate(rule.from)||!['auto','fixed','byPerson'].includes(rule.mode))throw Error('적용 시작일과 배치 방식을 선택하세요.');
+  const people=new Set(activeEmployees(d,site).map(e=>e.id)),fixedPeople=new Set(fixedLunchEmployees(d,site).map(e=>e.id));
+  if(rule.mode==='byPerson'){const seen=new Set();for(const row of rule.assignments||[]){if(seen.has(row.primaryId)||!people.has(row.primaryId))throw Error('중복되거나 다른 장소의 당직자 설정입니다.');seen.add(row.primaryId);if(row.mode==='fixed'){if(!fixedPeople.has(row.lunchId)||row.primaryId===row.lunchId)throw Error('고정 대체자는 현재 장소 또는 미배정 직원 중 다른 사람을 선택하세요.')}else if(row.mode==='auto'){if(!siteOrder(d,site,'lunchOrder').some(id=>id!==row.primaryId))throw Error('자동매칭 대체 순서를 먼저 설정하세요.')}else throw Error('직원별 배치 방식을 확인하세요.')}return}
+  if(rule.mode==='fixed'){if(!people.has(rule.primaryId)||!fixedPeople.has(rule.lunchId)||rule.primaryId===rule.lunchId)throw Error('같은 장소의 서로 다른 당직자·점심대체자를 선택하세요.')}
+  else {if(!Array.isArray(rule.eligibleIds)||!rule.eligibleIds.length||rule.eligibleIds.some(id=>!people.has(id)))throw Error('점심대체가 필요한 현재 장소 직원을 선택하세요.');const order=siteOrder(d,site,'lunchOrder');if(rule.eligibleIds.some(id=>!order.some(other=>other!==id)))throw Error('필요 직원마다 다른 점심대체자가 순번에 있어야 합니다.')}
+ }
+ function applyPolicyToEntry(d,site,entry,rule){
+  if(rule.mode==='byPerson'){
+   const row=(rule.assignments||[]).find(row=>row.primaryId===entry.primaryId);entry.assignmentMode=row?row.mode:'none';entry.primaryFixed=false;entry.pairFixed=!!row&&row.mode==='fixed';entry.directorLunch=false;entry.lunchManual=entry.pairFixed;entry.lunchRequired=!!row;entry.lunchId=entry.pairFixed?row.lunchId:null;entry.lunchName=entry.pairFixed?label(d,row.lunchId):'';
+   if(entry.pairFixed&&(!fixedLunchEmployees(d,site).some(e=>e.id===row.lunchId)||row.lunchId===entry.primaryId))throw Error('고정 대체자의 소속·사용 상태를 확인하세요.');return entry;
+  }
+  entry.assignmentMode=rule.mode;entry.pairFixed=rule.mode==='fixed';entry.directorLunch=false;entry.lunchManual=false;
+  entry.primaryFixed=entry.pairFixed;
+  if(entry.pairFixed){const people=activeEmployees(d,site);if(!people.some(e=>e.id===rule.primaryId)||!fixedLunchEmployees(d,site).some(e=>e.id===rule.lunchId)||rule.primaryId===rule.lunchId)throw Error('고정 인원의 소속·사용 상태를 확인하세요.');entry.primaryId=rule.primaryId;entry.primaryName=label(d,rule.primaryId);entry.lunchId=rule.lunchId;entry.lunchName=label(d,rule.lunchId);entry.lunchRequired=true;entry.lunchManual=true}
+  else {entry.lunchRequired=(rule.eligibleIds||[]).includes(entry.primaryId);entry.lunchId=null;entry.lunchName=''}
+  return entry;
+ }
+ function startIndex(order,previousId,fallback){const index=order.indexOf(previousId);return index>=0?(index+1)%order.length:((Number(fallback)||0)%order.length)}
+ function chooseLunch(order,index,primaryId){
+  if(!order.length)throw Error('점심 대체자 순번을 먼저 저장하세요.');
+  for(let offset=0;offset<order.length;offset++){const n=(index+offset)%order.length;if(order[n]!==primaryId)return {id:order[n],next:(n+1)%order.length}}
+  throw Error('주 당직자와 다른 점심 대체자가 필요합니다. 대체자 순번에 다른 직원을 추가하세요.');
+ }
+ function holidayMap(month,official,settings){
+  if(!official||official.verified!==true||official.month!==month)throw Error('공휴일 확인 없이 자동 배치할 수 없습니다.');
+  const map={};for(const day of official.days||[]){if(validDate(day.date)&&day.date.startsWith(month))map[day.date]=String(day.name||'공휴일')}
+  for(const day of settings.extraOffDates||[]){if(validDate(day.date)&&day.date.startsWith(month))map[day.date]=String(day.name||'시설 휴무')}
+  return map;
+ }
+ function refreshLunch(d,month,settings,site,from){
+  const order=site?siteOrder(d,site,'lunchOrder'):usableOrder(d,settings.lunchOrder);let cursor=Number(month.startLunchIndex)||0,last=month.previousLunchId||null;
+  for(const date of Object.keys(month.entries).sort()){
+   const entry=month.entries[date];
+   if(from&&date<from){if(entry.lunchRequired&&!entry.directorLunch&&!entry.pairFixed){const pos=order.indexOf(entry.lunchId);if(pos>=0)cursor=(pos+1)%order.length;last=entry.lunchId}continue}
+   if(!entry.lunchRequired){entry.lunchId=null;entry.lunchName='';continue}
+   if(entry.directorLunch||entry.pairFixed){const fixed=fixedLunchEmployees(d,site).find(e=>e.id===entry.lunchId);if(!fixed||fixed.id===entry.primaryId)throw Error(date+' 고정 점심대체자는 현재 장소 또는 미배정 직원 중 다른 사람을 선택하세요.');entry.lunchName=fixed.name;continue}
+   if(entry.lunchManual){if(entry.lunchId===entry.primaryId)throw Error('주 당직자와 점심 대체자는 달라야 합니다.');const position=order.indexOf(entry.lunchId);if(position>=0)cursor=(position+1)%order.length}
+   else{const chosen=chooseLunch(order,cursor,entry.primaryId);entry.lunchId=chosen.id;entry.lunchName=label(d,chosen.id);cursor=chosen.next}
+   last=entry.lunchId;
+  }
+  month.endLunchIndex=cursor;month.lastLunchId=last;return month;
+ }
+ function generateMonth(d,site,month,official,previous,existing){
+  if(!validMonth(month))throw Error('월 형식 오류');const settings=d.sites[site].settings,order=siteOrder(d,site,'regularOrder');
+  if(!order.length)throw Error('당직자 순번에 사용 중인 직원을 한 명 이상 등록하세요.');
+  const holidays=holidayMap(month,official,settings),lunchOrder=siteOrder(d,site,'lunchOrder');
+  let cursor=startIndex(order,previous&&(previous.lastRegularId!==undefined?previous.lastRegularId:previous.lastPrimaryId),previous&&previous.endRegularIndex),last=previous&&previous.lastPrimaryId||null,lastRegular=previous&&(previous.lastRegularId!==undefined?previous.lastRegularId:previous.lastPrimaryId)||null;
+  const startLunch=lunchOrder.length?startIndex(lunchOrder,previous&&previous.lastLunchId,previous&&previous.endLunchIndex):0;
+  const result={month,entries:{},holidays,startRegularIndex:cursor,startLunchIndex:startLunch,previousLunchId:previous&&previous.lastLunchId||null,holidayCheckedAt:official.checkedAt||'',holidaySource:official.source||'한국천문연구원 특일정보',generatedAt:new Date().toISOString()};
+  const requested=(settings.rotationStarts||{})[month];if(requested){if(requested.primaryId){const pos=order.indexOf(requested.primaryId);if(pos<0)throw Error('당직 시작 직원의 소속·순서를 확인하세요.');cursor=pos;result.startRegularIndex=pos}if(requested.lunchId){const pos=lunchOrder.indexOf(requested.lunchId);if(pos<0)throw Error('점심 시작 직원의 소속·순서를 확인하세요.');result.startLunchIndex=pos}}
+  const [year,n]=month.split('-').map(Number),count=new Date(Date.UTC(year,n,0)).getUTCDate();
+  for(let day=1;day<=count;day++){
+   const date=month+'-'+String(day).padStart(2,'0'),weekday=new Date(date+'T12:00:00Z').getUTCDay();if(weekday===0||weekday===6||holidays[date])continue;
+   const id=order[cursor],old=existing&&existing.entries&&existing.entries[date],rule=policyAt(settings,date);
+   let entry=old&&old.manual?clone(old):{primaryId:id,primaryName:label(d,id),lunchRequired:settings.dailyLunch===true,lunchId:null,lunchName:'',manual:false};
+   if(rule&&!(old&&old.manual))entry=applyPolicyToEntry(d,site,entry,rule);
+   if(!entry.primaryFixed){cursor=(cursor+1)%order.length;lastRegular=entry.primaryId}
+   result.entries[date]=entry;last=entry.primaryId;
+  }
+  result.endRegularIndex=cursor;result.lastPrimaryId=last;result.lastRegularId=lastRegular;refreshLunch(d,result,settings,site);return result;
+ }
+ function generationPlan(d,site,target,includeDeletedTarget=false){
+  const s=d.sites[site],anchor=s.settings.anchorMonth;if(!validMonth(target)||!validMonth(anchor))throw Error('기준 월과 조회 월을 확인하세요.');if(target<anchor)throw Error('자동 배치 기준 월보다 이전입니다. 순번 설정의 기준 월을 확인하세요.');
+  if(s.months[target])return [];
+  const prior=Object.keys(s.months).filter(m=>validMonth(m)&&m<target).sort().pop();let month=prior?nextMonth(prior):anchor;const result=[];
+  while(month<=target){if(!s.months[month]&&(!(s.deletedMonths||{})[month]||(includeDeletedTarget&&month===target)))result.push(month);if(result.length>24)throw Error('24개월 이상 비어 있습니다. 중간 월부터 순서대로 작성하세요.');month=nextMonth(month)}return result;
+ }
+ function applyDay(d,site,month,date,input){
+  if(!validDate(date)||!date.startsWith(month))throw Error('해당 월 날짜를 선택하세요.');const current=d.sites[site].months[month];if(!current)throw Error('월 당직표를 먼저 자동 작성하세요.');
+  const weekday=new Date(date+'T12:00:00Z').getUTCDay();if(weekday===0||weekday===6||current.holidays[date])throw Error('주말·공휴일·휴무일에는 자동 당직 대상이 아닙니다.');
+  const employee=activeEmployees(d,site).find(e=>e.id===input.primaryId);if(!employee)throw Error('주 당직자를 선택하세요.');
+  const next=clone(current),old=next.entries[date];if(!old)throw Error('선택한 날짜의 배치가 없습니다. 월표를 다시 확인하세요.');
+  const entry={...old,primaryId:employee.id,primaryName:employee.name,manual:true,lunchRequired:!!input.lunchRequired,directorLunch:!!input.directorLunch};
+  if(input.assignmentMode){const policy=policyAt(d.sites[site].settings,date)||{};const rule=input.assignmentMode==='fixed'?{mode:'byPerson',assignments:[{primaryId:input.primaryId,mode:'fixed',lunchId:input.lunchId}]}:input.forceAuto?{mode:'byPerson',assignments:[{primaryId:input.primaryId,mode:'auto'}]}:policy.mode==='byPerson'?policy:{mode:'auto',eligibleIds:policy.eligibleIds||d.sites[site].settings.lunchEligibleIds||[]};applyPolicyToEntry(d,site,entry,rule)}
+  if(entry.lunchRequired&&(entry.pairFixed||input.lunchManual||input.directorLunch)){const substitute=(entry.pairFixed||input.directorLunch?fixedLunchEmployees(d,site):activeEmployees(d,site)).find(e=>e.id===input.lunchId);if(!substitute||substitute.id===employee.id)throw Error('주 당직자와 다른 점심 대체자를 선택하세요.');entry.lunchManual=true;entry.lunchId=substitute.id;entry.lunchName=substitute.name}
+  else entry.lunchManual=false;
+  next.entries[date]=entry;refreshLunch(d,next,d.sites[site].settings,site,date);const dates=Object.keys(next.entries).sort();next.lastPrimaryId=dates.length?next.entries[dates[dates.length-1]].primaryId:next.lastPrimaryId;const regular=dates.filter(day=>!next.entries[day].primaryFixed);next.lastRegularId=regular.length?next.entries[regular.pop()].primaryId:current.lastRegularId||null;
+  next.history=[...(next.history||[]),{date,at:new Date().toISOString(),before:old,after:clone(next.entries[date])}];return next;
+ }
+ function cascade(d,site,date,input){
+  const result=normalize(d),store=result.sites[site],month=date.slice(0,7),order=siteOrder(result,site,'regularOrder');
+  if(!order.includes(input.primaryId))throw Error('해당 장소의 직원을 선택하세요.');
+  const edited=applyDay(result,site,month,date,input),months=Object.keys(store.months).filter(m=>m>=month).sort();
+  let cursor=order.indexOf(input.primaryId),previous=null,count=0;
+  for(const key of months){const original=store.months[key],roster=key===month?edited:clone(original);
+   store.archives=[...(store.archives||[]),{month:key,archivedAt:new Date().toISOString(),reason:'이날부터 이어 배치',roster:clone(original)}];
+   if(previous){roster.startRegularIndex=cursor;const lo=siteOrder(result,site,'lunchOrder');roster.startLunchIndex=lo.length?startIndex(lo,previous.lastLunchId,previous.endLunchIndex):0;roster.previousLunchId=previous.lastLunchId}
+   for(const day of Object.keys(roster.entries).sort()){if(day<date)continue;const entry=roster.entries[day];if(!entry.primaryFixed){const id=order[cursor];cursor=(cursor+1)%order.length;entry.primaryId=id;entry.primaryName=label(result,id);const rule=policyAt(store.settings,day);if(rule)applyPolicyToEntry(result,site,entry,rule)}entry.manual=true;count++}
+   // Only recalculate lunch on and after the selected date. Older lunch rows remain snapshots.
+   const before=Object.keys(roster.entries).filter(day=>day<date),frozen={};for(const day of before)frozen[day]=clone(roster.entries[day]);
+   let lunchCursor=Number(roster.startLunchIndex)||0,lastLunch=roster.previousLunchId||null;const lunchOrder=siteOrder(result,site,'lunchOrder');
+   for(const day of before.sort()){const entry=roster.entries[day];if(entry.lunchRequired&&!entry.directorLunch&&!entry.pairFixed){const pos=lunchOrder.indexOf(entry.lunchId);if(pos>=0)lunchCursor=(pos+1)%lunchOrder.length;lastLunch=entry.lunchId}}
+   const tail={...roster,startLunchIndex:lunchCursor,previousLunchId:lastLunch,entries:{}};for(const day of Object.keys(roster.entries).sort())if(day>=date)tail.entries[day]=roster.entries[day];
+   refreshLunch(result,tail,store.settings,site);roster.entries={...frozen,...tail.entries};roster.endLunchIndex=tail.endLunchIndex;roster.lastLunchId=tail.lastLunchId;roster.endRegularIndex=cursor;
+   const dates=Object.keys(roster.entries).sort();roster.lastPrimaryId=roster.entries[dates[dates.length-1]].primaryId;const regular=dates.filter(day=>!roster.entries[day].primaryFixed);roster.lastRegularId=regular.length?roster.entries[regular.pop()].primaryId:previous&&previous.lastRegularId||null;store.months[key]=roster;previous=roster;
+  }return {duty:result,count};
+ }
+ function savePolicy(d,site,rule,applyExisting){
+  const result=normalize(d);validatePolicy(result,site,rule);const store=result.sites[site],settings=store.settings;
+  settings.assignmentRules=[...(settings.assignmentRules||[]).filter(r=>r.from!==rule.from),clone(rule)].sort((a,b)=>a.from.localeCompare(b.from));settings.lunchEligibleIds=clone(rule.eligibleIds||settings.lunchEligibleIds||[]);
+  let count=0;if(applyExisting){let previous=null;for(const month of Object.keys(store.months).sort()){
+   const roster=store.months[month],dates=Object.keys(roster.entries).sort();if(!dates.some(date=>date>=rule.from)){previous=roster;continue}
+   store.archives=[...(store.archives||[]),{month,archivedAt:new Date().toISOString(),reason:'점심대체 배치방식 변경',roster:clone(roster)}];
+   if(previous){const lo=siteOrder(result,site,'lunchOrder');roster.startLunchIndex=lo.length?startIndex(lo,previous.lastLunchId,previous.endLunchIndex):0;roster.previousLunchId=previous.lastLunchId}const requested=(settings.rotationStarts||{})[month],pool=siteOrder(result,site,'lunchOrder');if(requested&&requested.lunchId&&pool.includes(requested.lunchId))roster.startLunchIndex=pool.indexOf(requested.lunchId);
+   const regularOrder=siteOrder(result,site,'regularOrder');let regularCursor=previous?startIndex(regularOrder,previous.lastRegularId!==undefined?previous.lastRegularId:previous.lastPrimaryId,previous.endRegularIndex):Number(roster.startRegularIndex)||0;
+   for(const date of dates){const entry=roster.entries[date];if(date<rule.from){if(!entry.primaryFixed){const pos=regularOrder.indexOf(entry.primaryId);if(pos>=0)regularCursor=(pos+1)%regularOrder.length}continue}
+    const activeRule=policyAt(settings,date);if(activeRule.mode==='auto'){const id=regularOrder[regularCursor];entry.primaryId=id;entry.primaryName=label(result,id);regularCursor=(regularCursor+1)%regularOrder.length}
+    applyPolicyToEntry(result,site,entry,activeRule);if(activeRule.mode==='byPerson'){const pos=regularOrder.indexOf(entry.primaryId);if(pos>=0)regularCursor=(pos+1)%regularOrder.length}entry.manual=true;count++}
+   roster.endRegularIndex=regularCursor;
+   refreshLunch(result,roster,settings,site,rule.from);roster.lastPrimaryId=roster.entries[dates[dates.length-1]].primaryId;const regular=dates.filter(date=>!roster.entries[date].primaryFixed);roster.lastRegularId=regular.length?roster.entries[regular.pop()].primaryId:previous&&previous.lastRegularId||null;previous=roster;
+  }}return {duty:result,count};
+ }
+ function configureStarts(d,site,month,input,applyExisting){
+  const result=normalize(d),store=result.sites[site];if(!validMonth(month))throw Error('시작 월을 선택하세요.');const people=new Set(activeEmployees(result,site).map(e=>e.id));
+  for(const id of [input.primaryId,input.lunchId])if(id&&!people.has(id))throw Error('시작 직원은 같은 소속의 사용 중인 직원으로 선택하세요.');
+  store.settings.regularOrder=siteOrder(result,site,'regularOrder');if(input.primaryId&&!store.settings.regularOrder.includes(input.primaryId))store.settings.regularOrder.push(input.primaryId);
+  if(input.lunchId&&!store.settings.lunchOrder.includes(input.lunchId))store.settings.lunchOrder.push(input.lunchId);
+  store.settings.rotationStarts={...(store.settings.rotationStarts||{}),[month]:clone(input)};
+  let count=0;if(applyExisting){let previous=null;for(const key of Object.keys(store.months).sort()){
+   const old=store.months[key];if(key<month){previous=old;continue}
+   const official={verified:true,month:key,days:Object.entries(old.holidays||{}).map(([date,name])=>({date,name})),checkedAt:old.holidayCheckedAt,source:old.holidaySource};
+   const fresh=generateMonth(result,site,key,official,previous);for(const date of Object.keys(fresh.entries))fresh.entries[date]={...(old.entries[date]||{}),...fresh.entries[date]};
+   store.archives=[...(store.archives||[]),{month:key,archivedAt:new Date().toISOString(),reason:'시작 직원 적용',roster:clone(old)}];store.months[key]={...old,...fresh};count+=Object.keys(fresh.entries).length;previous=store.months[key];
+  }}return {duty:result,count};
+ }
+ function deletedMonthArchive(d,site,month){const store=d.sites[site],mark=store&&(store.deletedMonths||{})[month];return mark&&(store.archives||[]).find(a=>a.id===mark.archiveId&&a.operation==='deleteMonth'&&a.roster)||null}
+ function deleteMonth(d,site,month){
+  if(!['one','two'].includes(site)||!validMonth(month))throw Error('삭제할 장소와 월을 확인하세요.');const result=normalize(d),store=result.sites[site],roster=store.months[month];if(!roster)throw Error('삭제할 당직표가 없습니다.');
+  const count=Object.keys(roster.entries||{}).length,at=new Date().toISOString(),id=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+  store.archives=[...(store.archives||[]),{id,month,operation:'deleteMonth',archivedAt:at,count,roster:clone(roster)}];store.deletedMonths={...(store.deletedMonths||{}),[month]:{archiveId:id,deletedAt:at}};delete store.months[month];return {duty:result,count};
+ }
+ function restoreDeletedMonth(d,site,month){
+  if(!['one','two'].includes(site)||!validMonth(month))throw Error('복구할 장소와 월을 확인하세요.');const result=normalize(d),store=result.sites[site];if(store.months[month])throw Error('이미 당직표가 있어 덮어쓰지 않았습니다.');const archive=deletedMonthArchive(result,site,month);if(!archive)throw Error('취소할 전체삭제 기록이 없습니다.');
+  store.months[month]=clone(archive.roster);delete store.deletedMonths[month];archive.restoredAt=new Date().toISOString();delete archive.roster;return {duty:result,count:Object.keys(store.months[month].entries||{}).length};
+ }
+ return {deletedMonthArchive,deleteMonth,restoreDeletedMonth,fixedLunchEmployees,configureStarts,policyAt,validatePolicy,savePolicy,siteOrder,shiftMonth,windowMonths,cascade,clone,validDate,validMonth,nextMonth,normalize,activeEmployees,usableOrder,label,chooseLunch,holidayMap,generateMonth,generationPlan,applyDay};
+})();
+
+var FacilityDutyPdf=(function(){
+ 'use strict';let assetPromise=null;
+ const fontUrl='https://raw.githubusercontent.com/google/fonts/main/ofl/nanumgothic/NanumGothic-Regular.ttf';
+ function loadScript(url,integrity,globalName){return new Promise((resolve,reject)=>{if(window[globalName]){resolve(window[globalName]);return}const script=document.createElement('script');script.src=url;script.integrity=integrity;script.crossOrigin='anonymous';script.onload=()=>window[globalName]?resolve(window[globalName]):reject(Error('PDF 라이브러리 로딩 실패'));script.onerror=()=>reject(Error('PDF 라이브러리 네트워크 연결을 확인하세요.'));document.head.appendChild(script)})}
+ async function assets(){
+  if(!assetPromise)assetPromise=(async()=>{const pdfLib=await loadScript('https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js','sha384-weMABwrltA6jWR8DDe9Jp5blk+tZQh7ugpCsF3JwSA53WZM9/14PjS5LAJNHNjAI','PDFLib'),fontkit=await loadScript('https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js','sha384-2p6U+1mmqF10USehFeRiyG2ESG9FwIqN+jxULn5w9jjQIihSn9Pt13dVCn/Hawjn','fontkit'),response=await fetch(fontUrl);if(!response.ok)throw Error('한글 PDF 글꼴을 내려받지 못했습니다.');const fontBytes=new Uint8Array(await response.arrayBuffer()),hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',fontBytes))].map(n=>n.toString(16).padStart(2,'0')).join('');if(hash!=='76f45ef4a6bcff344c837c95a7dcc26e017e38b5846d5ae0cdcb5b86be2e2d31')throw Error('PDF 글꼴 버전 검증에 실패했습니다. 업데이트된 설치 파일을 확인하세요.');return {pdfLib,fontkit,fontBytes}})().catch(error=>{assetPromise=null;throw error});return assetPromise;
+ }
+ async function build(roster,siteName,provided){
+  const a=provided||await assets(),{PDFDocument,rgb}=a.pdfLib,doc=await PDFDocument.create();doc.registerFontkit(a.fontkit);
+  const font=await doc.embedFont(a.fontBytes,{subset:false}),page=doc.addPage([841.89,595.28]),form=doc.getForm(),ink=rgb(.13,.22,.29),line=rgb(.74,.79,.82),blue=rgb(.91,.95,.98);
+  const [year,month]=roster.month.split('-').map(Number);page.drawText(year+'년 '+month+'월 '+siteName+' 당직표',{x:30,y:553,size:20,font,color:ink});
+  page.drawText('월~금 순번 배치 · 공휴일/시설 휴무 제외 · 장소별 점심당직 · 관장님 고정 표시',{x:30,y:532,size:10,font,color:ink});
+  const count=new Date(Date.UTC(year,month,0)).getUTCDate(),first=new Date(Date.UTC(year,month-1,1,12));while(first.getUTCDay()===0||first.getUTCDay()===6)first.setUTCDate(first.getUTCDate()+1);
+  const anchor=new Date(first);anchor.setUTCDate(first.getUTCDate()-(first.getUTCDay()+6)%7);let maxRow=0;
+  for(let d=1;d<=count;d++){const date=new Date(Date.UTC(year,month-1,d,12));if(date.getUTCDay()>0&&date.getUTCDay()<6)maxRow=Math.max(maxRow,Math.floor((date-anchor)/604800000))}
+  const rows=maxRow+1,x0=30,top=487,cw=(841.89-60)/5,ch=408/rows;
+  for(let col=0;col<5;col++){page.drawRectangle({x:x0+cw*col,y:top,width:cw,height:25,color:blue,borderColor:line,borderWidth:.6});page.drawText(['월요일','화요일','수요일','목요일','금요일'][col],{x:x0+cw*col+cw/2-15,y:top+8,size:10,font,color:ink})}
+  for(let row=0;row<rows;row++)for(let col=0;col<5;col++)page.drawRectangle({x:x0+cw*col,y:top-ch*(row+1),width:cw,height:ch,borderColor:line,borderWidth:.6});
+  const textField=(name,value,x,y,width,height)=>{const field=form.createTextField(name);field.setText(String(value||''));field.setMaxLength(40);const textWidth=font.widthOfTextAtSize(String(value||'이름'),1),size=Math.min(11,Math.max(3,(width-7)/Math.max(textWidth,1)));field.addToPage(page,{x,y,width,height,font,textColor:ink,borderColor:line,borderWidth:.4,backgroundColor:rgb(1,1,1)});field.setFontSize(size);return field};
+  for(let d=1;d<=count;d++){
+   const date=roster.month+'-'+String(d).padStart(2,'0'),day=new Date(date+'T12:00:00Z'),weekday=day.getUTCDay();if(weekday===0||weekday===6)continue;
+   const col=weekday-1,row=Math.floor((day-anchor)/604800000),x=x0+cw*col,y=top-ch*(row+1),holiday=roster.holidays[date],entry=roster.entries[date];
+   if(holiday)page.drawRectangle({x:x+1,y:y+1,width:cw-2,height:ch-2,color:rgb(.95,.95,.95)});
+   page.drawText(String(d)+'일',{x:x+8,y:y+ch-17,size:11,font,color:ink});
+   if(holiday){const pieces=[];let rest=holiday;while(rest){pieces.push(rest.slice(0,16));rest=rest.slice(16)}for(let i=0;i<Math.min(3,pieces.length);i++)page.drawText(pieces[i],{x:x+8,y:y+ch-37-i*13,size:9,font,color:rgb(.57,.24,.28)});continue}
+   if(!entry)continue;
+   page.drawText('당직',{x:x+8,y:y+ch-41,size:8,font,color:ink});textField('day_'+date+'_primary',entry.primaryName,x+30,y+ch-47,cw-38,18);
+   const check=form.createCheckBox('day_'+date+'_lunch_required');check.addToPage(page,{x:x+8,y:y+14,width:11,height:11,borderWidth:.7,borderColor:line});if(entry.lunchRequired)check.check();
+   page.drawText('점심',{x:x+23,y:y+16,size:8,font,color:ink});textField('day_'+date+'_lunch',entry.lunchRequired?(entry.directorLunch?'관장님 · ':'')+entry.lunchName:'',x+45,y+9,cw-53,21);
+  }
+  page.drawText('직원명·점심 체크·대체자 칸은 PDF 양식에서 수정 가능합니다. PDF 수정은 웹앱에 자동 반영되지 않습니다.',{x:30,y:54,size:8,font,color:ink});
+  page.drawText('공휴일 확인: '+String(roster.holidayCheckedAt||'미기록').slice(0,10)+' / '+String(roster.holidaySource||'').slice(0,45),{x:30,y:39,size:7,font,color:rgb(.4,.45,.5)});
+  // Register the embedded CJK font in AcroForm default resources as well as widget APs.
+  // Editors need this mapping to regenerate a changed field without Helvetica fallback.
+  const resources=doc.context.obj({Font:doc.context.obj({[font.name]:font.ref})});form.acroForm.dict.set(a.pdfLib.PDFName.of('DR'),resources);form.acroForm.dict.set(a.pdfLib.PDFName.of('DA'),a.pdfLib.PDFString.of('/'+font.name+' 11 Tf 0 g'));
+  form.updateFieldAppearances(font);doc.setTitle(year+'년 '+month+'월 '+siteName+' 당직표');return doc.save({updateFieldAppearances:false});
+ }
+ return {build};
+})();
+if(typeof module==='object'&&module.exports)module.exports=FacilityDutyPdf;
+
+(()=>{
+ 'use strict';if(document.getElementById('dutyManagement'))return;
+ const D=DutyRosterCore,$d=id=>document.getElementById(id);let dutySite='one',dutyMonth=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul'}).format(new Date()).slice(0,7),busy=false,editingSettings=null,lunchManual=false,editingAssignments={};
+ const nav=document.createElement('button');nav.type='button';nav.dataset.tab='dutyManagement';nav.textContent='👥 당직인원관리';document.querySelector('[data-tab="sync"]').after(nav);
+ const section=document.createElement('section');section.id='dutyManagement';section.className='hidden';section.innerHTML='<div class="panel"><div class="toolbar"><h2>👥 당직인원관리</h2><div class="flex"><select id="dutySite" aria-label="당직 장소"><option value="one">본관</option><option value="two">분관</option></select><input id="dutyMonth" type="month" aria-label="당직표 월"></div></div><div class="flex"><button id="dutyEmployees">직원·소속 등록</button><button id="dutyAssign">인원 추가·수정</button><button id="dutySettings">점심당직·휴무 설정</button><button id="dutyGenerate" class="primary">전달·이번달·다음달 작성</button><button id="dutyRegenerate">현재 월 재작성</button><button id="dutyDeleteMonth" class="danger">전체삭제 (조회 월)</button><button id="dutyUndoDelete">전체삭제 취소</button><button id="dutyPdf">편집 가능한 PDF 다운로드</button></div><p id="dutyStatus" role="status"></p><p id="dutyServiceStatus" class="mutedtext"></p><div class="flex"><button id="dutyKey">공휴일 인증키 설정</button><button id="dutyAuto">20일 자동작성·캘린더 알림 설정</button></div><p class="mutedtext">월~금 중 공휴일·대체공휴일·시설 휴무일을 제외합니다. 소속별 직원으로 배치하며, 점심당직은 장소별로 저장한 순서를 따릅니다. 날짜를 선택하면 해당일부터 이후 표를 이어 배치할 수 있습니다.</p><div id="dutyCalendar"></div></div>';
+ document.querySelector('main').appendChild(section);nav.onclick=()=>switchTab('dutyManagement');
+ const employeeDialog=document.createElement('dialog');employeeDialog.id='dutyEmployeeDialog';employeeDialog.innerHTML='<form id="dutyEmployeeForm"><h2>직원 이름·소속 등록</h2><p class="mutedtext">직원을 한 줄에 한 명씩 추가하세요. 동명이인은 이름 뒤에 부서 등을 붙여 구분합니다. 기존 직원을 미사용으로 바꿔도 과거 당직표는 유지됩니다.</p><div id="dutyEmployeeExisting"></div><fieldset><legend>새로 추가할 직원 소속</legend><label><input type="radio" name="newDutySite" value="one" checked> 본관</label><label><input type="radio" name="newDutySite" value="two"> 분관</label></fieldset><p>기존 직원의 소속 버튼을 바꾸면 이동됩니다. 과거 당직표는 유지되며 이후 재배치부터 새 소속이 적용됩니다. 소속 미지정 직원은 배치에서 제외됩니다.</p><label>추가할 직원 이름 (한 줄에 한 명)<textarea id="dutyEmployeeNames" placeholder="직원 A&#10;직원 B&#10;직원 C"></textarea></label><div class="flex"><button type="submit" class="primary">직원 저장</button><button type="button" data-duty-close>취소</button></div></form>';document.body.appendChild(employeeDialog);employeeDialog.innerHTML='<form id="dutyEmployeeForm"><h2>본관·분관 직원 등록</h2><label>시작 직원 적용 월<input type="month" id="dutyStartMonth" required></label><p>본관·분관에서 당직 시작 1명, 점심당직 시작 1명씩 체크하세요. 이름 옆 점심대체 방식도 설정할 수 있습니다.</p><div id="dutyEmployeeExisting"></div><fieldset><legend>본관 직원명 추가</legend><textarea id="dutyEmployeeNamesOne" placeholder="한 줄에 직원 한 명"></textarea></fieldset><fieldset><legend>분관 직원명 추가</legend><textarea id="dutyEmployeeNamesTwo" placeholder="한 줄에 직원 한 명"></textarea></fieldset><label><input type="checkbox" id="dutyEmployeeApply"> 기존 표도 선택한 월부터 다시 배치 (이후 수동 변경 포함)</label><p>체크하지 않으면 현재 맞춰 둔 당직표는 유지합니다. 새 직원은 저장 후 창을 다시 열어 시작 직원으로 선택할 수 있습니다.</p><div class="flex"><button type="submit" class="primary">직원·시작 인원 저장</button><button type="button" data-duty-close>취소</button></div></form>';
+ const settingsDialog=document.createElement('dialog');settingsDialog.id='dutySettingsDialog';settingsDialog.innerHTML='<form id="dutySettingsForm"><h2 id="dutySettingsTitle"></h2><label>자동 작성 기준 월<input type="month" id="dutyAnchor" required></label><label><input type="checkbox" id="dutyAutoEnabled"> 이 장소 매월 자동 작성</label><details><summary>기존 일반당직 순서 (선택 사항)</summary><p>소속 직원 등록 순서로도 자동 배치됩니다. 시작할 사람은 달력에서 선택하세요.</p><h3>당직자 순번</h3><div id="dutyRegularOrder"></div><div class="flex"><select id="dutyRegularEmployee"></select><button type="button" id="dutyRegularAdd">순번 추가</button></div></details><h3>이 장소 점심당직 순서</h3><h3>직원별 점심대체 방식</h3><p>각 직원의 당직 차례에만 적용합니다. 자동매칭은 아래 점심대체 순서를 사용하고, 고정매칭은 지정한 대체자를 사용합니다.</p><div id="dutyPersonRules"></div><button type="button" id="dutyKnownOrder">보내주신 당직 순서 불러오기</button><label>적용 시작일<input type="date" id="dutyPolicyFrom" required></label><label><input type="checkbox" id="dutyPolicyApply"> 기존 표도 시작일 이후 점심대체만 적용 (당직자 순서 보존)</label><input type="checkbox" id="dutyDailyLunch" hidden><h3>자동매칭 점심대체자 순서</h3><p>이 목록 순서대로 필요한 날만 반복합니다. 고정 대체자는 이 순서를 소모하지 않습니다.</p><div id="dutyLunchCandidates"></div><button type="button" id="dutyAnnexPreset">분관 대체 순서 예시 적용</button><div id="dutyLunchOrder"></div><div class="flex"><select id="dutyLunchEmployee"></select><button type="button" id="dutyLunchAdd">순번 추가</button></div><label>시설 별도 휴무·대체휴무 (한 줄에 날짜와 사유)<textarea id="dutyExtraOff" placeholder="2026-11-05 시설 대체휴무"></textarea></label><p class="mutedtext">법정 공휴일·대체공휴일은 정부 API로 확인합니다. 직원 개인 연차가 아니라 시설 전체가 당직표를 작성하지 않는 날을 입력하세요.</p><div class="flex"><button type="submit" class="primary">설정 저장</button><button type="button" data-duty-close>취소</button></div></form>';document.body.appendChild(settingsDialog);
+ const dayDialog=document.createElement('dialog');dayDialog.id='dutyDayDialog';dayDialog.innerHTML='<form id="dutyDayForm"><h2 id="dutyDayTitle">인원 추가·수정</h2><label>당직일<input id="dutyDayDate" type="date" required></label><fieldset class="duty-mode"><legend>이 날짜 배치 방식</legend><label><input type="radio" name="dutyDayMode" value="auto" checked> ① 필요 직원만 점심대체 자동배치</label><label><input type="radio" name="dutyDayMode" value="fixed"> ② 당직자·점심대체자 고정배치</label></fieldset><label>당직자 (현재 장소 직원)<select id="dutyPrimary" required></select></label><label><input type="checkbox" id="dutyLunchRequired"> 점심당직대체필요</label><div id="dutyLunchField" class="hidden"><label>점심당직 (현재 장소·미배정 직원)<select id="dutyLunchPerson"></select></label><p class="mutedtext">체크하면 저장한 대체 순번으로 자동 선택합니다. 필요하면 직접 다른 직원을 선택할 수 있습니다.</p></div><label><input type="checkbox" id="dutyDirectorLunch"> 관장님 · 선택한 점심당직 직원 고정 (순번 소모 없음)</label><label><input type="checkbox" id="dutyCascade" checked> 이날부터 이 직원의 이후 당직일에도 같은 점심대체 방식 적용</label><p id="dutyDayHelp" class="mutedtext"></p><div class="flex"><button type="submit" class="primary">당직 배치 저장</button><button type="button" data-duty-close>취소</button></div></form>';document.body.appendChild(dayDialog);
+ const keyDialog=document.createElement('dialog');keyDialog.id='dutyKeyDialog';keyDialog.innerHTML='<form id="dutyKeyForm"><h2>공휴일 인증키 설정</h2><p>공공데이터포털의 한국천문연구원 특일정보 활용신청 후 일반 인증키를 입력하세요. 인증키는 이 프로젝트 서버 속성에만 보관합니다.</p><label>일반 인증키<input type="password" id="dutyApiKey" autocomplete="off" required style="width:100%"></label><div class="flex"><button type="submit" class="primary">서버에 저장</button><button type="button" data-duty-close>취소</button></div></form>';document.body.appendChild(keyDialog);
+ [employeeDialog,settingsDialog,dayDialog,keyDialog].forEach(dialog=>dialog.querySelector('[data-duty-close]').onclick=()=>dialog.close());
+ const getDuty=()=>D.normalize(data.dutyManagement),siteName=()=>dutySite==='one'?'본관':'분관';
+ function ready(){if(busy)return false;if(!cloudReady||cloudBlocked){alert('구글시트 연결과 저장 충돌 상태를 확인하세요.');return false}return true}
+ function status(message){$d('dutyStatus').textContent=message}
+ function setDutyBusy(value){busy=value;for(const id of ['dutyGenerate','dutyRegenerate','dutyDeleteMonth','dutyUndoDelete','dutyEmployees','dutyAssign','dutySettings','dutyPdf','dutySite','dutyMonth'])$d(id).disabled=value;$d('dutyGenerate').textContent=value?'작성 중… 완료될 때까지 기다려 주세요':'전달·이번달·다음달 작성';if(value)$d('dutyGenerate').setAttribute('aria-busy','true');else $d('dutyGenerate').removeAttribute('aria-busy')}
+ function rpc(name,...args){return new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...args))}
+ async function saveDuty(duty,message){if(!ready())return false;const candidate={...data,dutyManagement:duty};if(JSON.stringify(candidate).length>1700000){alert('저장 용량이 부족합니다.');return false}data=candidate;render();try{await saveAndWait();status(message);return true}catch(error){status('서버 저장 완료 미확인: '+error.message);return false}}
+ function options(selected,includeUnassigned=false){return '<option value="">직원 선택</option>'+(includeUnassigned?D.fixedLunchEmployees(getDuty(),dutySite):D.activeEmployees(getDuty(),dutySite)).map(e=>'<option value="'+esc(e.id)+'" '+(e.id===selected?'selected':'')+'>'+esc(e.name)+(includeUnassigned&&!e.site?' (미배정)':'')+'</option>').join('')}
+ async function serviceStatus(){try{const s=await rpc('getDutyServiceStatus');$d('dutyServiceStatus').textContent='공휴일 인증키 '+(s.hasHolidayKey?'설정됨':'미설정')+' · 매월 자동 작성 '+(s.automatic?'켜짐':'꺼짐')+(s.lastAutomation?' · '+s.lastAutomation:'')}catch(error){$d('dutyServiceStatus').textContent='DutyManagement.gs 추가 및 새 버전 배포를 확인하세요. '+error.message}}
+ function renderDuty(){
+  const duty=getDuty(),site=duty.sites[dutySite],roster=site.months[dutyMonth];$d('dutySite').value=dutySite;$d('dutyMonth').value=dutyMonth;
+  let html='';
+  D.windowMonths(dutyMonth).forEach((viewMonth,index)=>{
+   const view=site.months[viewMonth],[y,m]=viewMonth.split('-').map(Number),last=new Date(Date.UTC(y,m,0)).getUTCDate(),first=new Date(viewMonth+'-01T12:00:00Z').getUTCDay();
+   html+='<article class="duty-month-panel"><h3>'+['전달','조회 월','다음달'][index]+' · '+viewMonth+' '+(view?'':(site.deletedMonths||{})[viewMonth]?'(전체삭제됨)':'(미작성)')+'</h3><div class="duty-calendar">'+['일','월','화','수','목','금','토'].map(x=>'<div class="duty-weekday">'+x+'</div>').join('');
+   for(let n=0;n<first;n++)html+='<div class="duty-blank"></div>';
+   for(let n=1;n<=last;n++){
+    const date=viewMonth+'-'+String(n).padStart(2,'0'),weekday=new Date(date+'T12:00:00Z').getUTCDay(),entry=view&&view.entries[date],holiday=view&&view.holidays[date],off=weekday===0||weekday===6||holiday;
+    html+='<button type="button" class="duty-day '+(off?'duty-off':'')+'" data-duty-date="'+date+'" '+(!view||off?'disabled':'')+'><strong>'+n+'</strong>'+(holiday?'<span class="duty-holiday">'+esc(holiday)+'</span>':off?'<span class="mutedtext">주말</span>':entry?'<span class="duty-primary">'+esc(entry.primaryName)+'</span>'+(entry.lunchRequired?'<span class="duty-lunch">점심: '+esc((entry.pairFixed?'고정 · ':entry.directorLunch?'관장님 · ':'')+(entry.lunchName||'미지정'))+'</span>':''):'<span>미작성</span>')+'</button>';
+   }html+='</div></article>';
+  });
+  $d('dutyCalendar').innerHTML=html;$d('dutyCalendar').querySelectorAll('[data-duty-date]').forEach(b=>b.onclick=()=>openDay(b.dataset.dutyDate));
+  $d('dutyDeleteMonth').disabled=!roster;$d('dutyUndoDelete').disabled=!!roster||!D.deletedMonthArchive(duty,dutySite,dutyMonth);$d('dutyAssign').disabled=!roster;$d('dutyRegenerate').disabled=!roster;$d('dutyPdf').disabled=!roster;$d('dutyGenerate').disabled=busy;if(busy)setDutyBusy(true);
+  status(roster?siteName()+' '+dutyMonth+' · '+Object.keys(roster.entries).length+'일 작성됨 · 공휴일 확인 '+(roster.holidayCheckedAt||''):(site.deletedMonths||{})[dutyMonth]?'조회 월 전체삭제됨 · 자동작성에서 제외됩니다. 전체삭제 취소 또는 세 달 작성으로 다시 만들 수 있습니다.':'직원·순번·공휴일 인증키를 설정한 뒤 월 당직표를 작성하세요.');
+ }
+ async function changeDeletedMonth(restore){
+  if(!ready())return;if(cloudPending||cloudSaving){alert('서버 저장 완료 후 다시 눌러 주세요.');return}const duty=getDuty(),site=dutySite,month=dutyMonth,name=siteName(),roster=duty.sites[site].months[month];
+  if(!restore&&!roster)return;if(restore&&!D.deletedMonthArchive(duty,site,month))return;
+  const count=restore?D.deletedMonthArchive(duty,site,month).count:Object.keys(roster.entries||{}).length;
+  if(!confirm(name+' '+month+' 당직표 '+count+'일을 '+(restore?'삭제 전 상태로 복구할까요?':'전체삭제할까요?\n이 장소의 조회 월만 비웁니다. 직원·순번·다른 달·다른 장소는 유지합니다. 전체삭제 취소로 복구할 수 있습니다. 삭제한 월은 자동 재생성하지 않습니다.')))return;
+  try{const changed=restore?D.restoreDeletedMonth(duty,site,month):D.deleteMonth(duty,site,month);await saveDuty(changed.duty,name+' '+month+' '+(restore?'전체삭제 취소·서버 복구 완료':'당직표 전체삭제·서버 저장 완료'))}catch(error){status(error.message)}
+ }
+ $d('dutyDeleteMonth').onclick=()=>changeDeletedMonth(false);$d('dutyUndoDelete').onclick=()=>changeDeletedMonth(true);
+ $d('dutySite').onchange=()=>{dutySite=$d('dutySite').value;renderDuty()};$d('dutyMonth').onchange=()=>{if(D.validMonth($d('dutyMonth').value)){dutyMonth=$d('dutyMonth').value;renderDuty()}};
+ let employeeDraft=null,employeeRules={},employeeStarts={},employeeOriginalLunch=[],employeeOriginalRules='';
+ function staffOptions(site,id){return '<option value="">직원 선택</option>'+D.fixedLunchEmployees(employeeDraft,site).map(e=>'<option value="'+esc(e.id)+'" '+(e.id===id?'selected':'')+'>'+esc(e.name)+(!e.site?' (미배정)':'')+'</option>').join('')}
+ function captureEmployee(){
+  if(!employeeDraft)return;for(const input of employeeDialog.querySelectorAll('[data-staff-name]')){const employee=employeeDraft.employees.find(e=>e.id===input.dataset.staffName);employee.name=input.value.trim();employee.active=employeeDialog.querySelector('[data-staff-active="'+employee.id+'"]').checked;const mode=employeeDialog.querySelector('[data-staff-mode="'+employee.id+'"]').value;employeeRules[employee.id]={primaryId:employee.id,mode,lunchId:employeeDialog.querySelector('[data-staff-fixed="'+employee.id+'"]').value}}
+  for(const site of [dutySite]){const selected=[...employeeDialog.querySelectorAll('[data-lunch-participant]:checked')].map(e=>e.dataset.lunchParticipant),old=employeeDraft.sites[site].settings.lunchOrder;employeeDraft.sites[site].settings.lunchOrder=[...old.filter(id=>selected.includes(id)),...selected.filter(id=>!old.includes(id))];employeeStarts[site]={primaryId:employeeDialog.querySelector('[name=startPrimary_'+site+']:checked')?.value||'',lunchId:employeeDialog.querySelector('[name=startLunch_'+site+']:checked')?.value||''}}
+ }
+ function renderEmployees(){
+  let html='';for(const site of [dutySite,null]){const people=employeeDraft.employees.filter(e=>e.site===site);if(!site&&!people.length)continue;if(!site)html+='<details class="duty-unassigned-staff"><summary>미배정 직원 관리 ('+people.length+'명)</summary>';html+='<fieldset class="duty-staff-group"><legend>'+(site==='one'?'본관 직원명':site==='two'?'분관 직원명':'소속 미지정')+'</legend>';
+   for(const e of people){const row=employeeRules[e.id]||{mode:'none'},start=employeeStarts[site]||{};html+='<article class="duty-staff-card"><div class="duty-staff-name"><input aria-label="직원 이름" data-staff-name="'+esc(e.id)+'" value="'+esc(e.name)+'" maxlength="30" required><label><input type="checkbox" data-staff-active="'+esc(e.id)+'" '+(e.active!==false?'checked':'')+'> 사용</label><button type="button" data-staff-move="'+esc(e.id)+'" data-site="'+(site==='one'?'two':site==='two'?'one':dutySite)+'">'+(site==='one'?'분관으로 이동':site==='two'?'본관으로 이동':siteName()+'으로 이동')+'</button></div>';
+   if(site)html+='<div class="duty-start-choices"><label><input type="radio" name="startPrimary_'+site+'" value="'+esc(e.id)+'" '+(start.primaryId===e.id?'checked':'')+'> 당직 시작</label><label><input type="radio" name="startLunch_'+site+'" value="'+esc(e.id)+'" '+(start.lunchId===e.id?'checked':'')+'> 점심당직 시작</label><label><input type="checkbox" data-lunch-participant="'+esc(e.id)+'" '+(employeeDraft.sites[site].settings.lunchOrder.includes(e.id)?'checked':'')+'> 점심대체 순번 참여</label></div>';
+   html+='<div class="duty-staff-lunch"><label>점심대체<select data-staff-mode="'+esc(e.id)+'"><option value="none" '+(row.mode==='none'?'selected':'')+'>대체 불필요</option><option value="auto" '+(row.mode==='auto'?'selected':'')+'>① 순번 자동매칭</option><option value="fixed" '+(row.mode==='fixed'?'selected':'')+'>② 고정 대체자</option></select></label><label class="'+(row.mode==='fixed'?'':'hidden')+'" data-staff-fixed-label="'+esc(e.id)+'">고정 직원<select data-staff-fixed="'+esc(e.id)+'">'+(site?staffOptions(site,row.lunchId):'<option value="">소속 먼저 지정</option>')+'</select></label></div></article>'}
+   html+='</fieldset>';if(!site)html+='</details>';
+  }$d('dutyEmployeeExisting').innerHTML=html;
+  employeeDialog.querySelectorAll('[data-lunch-participant]').forEach(el=>el.onchange=()=>{if(!el.checked){const radio=employeeDialog.querySelector('[name=startLunch_'+dutySite+'][value="'+el.dataset.lunchParticipant+'"]');if(radio)radio.checked=false}});employeeDialog.querySelectorAll('[name=startLunch_'+dutySite+']').forEach(el=>el.onchange=()=>{employeeDialog.querySelector('[data-lunch-participant="'+el.value+'"]').checked=true});employeeDialog.querySelectorAll('[data-staff-mode]').forEach(el=>el.onchange=()=>{employeeDialog.querySelector('[data-staff-fixed-label="'+el.dataset.staffMode+'"]').classList.toggle('hidden',el.value!=='fixed')});
+  employeeDialog.querySelectorAll('[data-staff-move]').forEach(button=>button.onclick=()=>{captureEmployee();const e=employeeDraft.employees.find(e=>e.id===button.dataset.staffMove);e.site=button.dataset.site;for(const site of ['one','two'])for(const key of ['primaryId','lunchId'])if(employeeStarts[site][key]===e.id)employeeStarts[site][key]='';renderEmployees()});
+ }
+ $d('dutyEmployees').onclick=()=>{if(!ready())return;employeeDraft=getDuty();employeeOriginalLunch=[...employeeDraft.sites[dutySite].settings.lunchOrder];$d('dutyEmployeeForm').querySelector('h2').textContent=siteName()+' 직원·시작 인원 등록';$d('dutyEmployeeNamesOne').closest('fieldset').classList.toggle('hidden',dutySite!=='one');$d('dutyEmployeeNamesTwo').closest('fieldset').classList.toggle('hidden',dutySite!=='two');employeeRules={};employeeStarts={};$d('dutyStartMonth').value=dutyMonth;$d('dutyEmployeeApply').checked=false;
+  for(const site of ['one','two']){const settings=employeeDraft.sites[site].settings,rule=D.policyAt(settings,dutyMonth+'-01'),saved=(settings.rotationStarts||{})[dutyMonth],roster=employeeDraft.sites[site].months[dutyMonth],entries=roster?Object.values(roster.entries):[];employeeStarts[site]=saved?D.clone(saved):{primaryId:entries[0]?.primaryId||'',lunchId:entries.find(e=>e.lunchRequired&&!e.pairFixed&&!e.directorLunch)?.lunchId||''};
+   if(rule&&rule.mode==='byPerson')for(const row of rule.assignments||[])employeeRules[row.primaryId]=D.clone(row);
+   else if(rule){for(const id of rule.eligibleIds||[])employeeRules[id]={primaryId:id,mode:'auto'};if(rule.mode==='fixed')employeeRules[rule.primaryId]={primaryId:rule.primaryId,mode:'fixed',lunchId:rule.lunchId}}
+   else {const names=site==='one'?{'본관직원02':'auto','본관직원08':'fixed'}:{'분관직원02':'auto','분관직원06':'auto'},fixed=D.activeEmployees(employeeDraft,site).find(e=>e.name==='본관직원09');for(const e of D.activeEmployees(employeeDraft,site)){const name=e.name.replace(/\s*\(본관직원09\)\s*$/,'');if(names[name])employeeRules[e.id]={primaryId:e.id,mode:names[name],lunchId:fixed?fixed.id:''}}}
+  }employeeOriginalRules=JSON.stringify(Object.values(employeeRules).filter(r=>r.mode!=='none'&&employeeDraft.employees.some(e=>e.id===r.primaryId&&e.site===dutySite)).sort((a,b)=>a.primaryId.localeCompare(b.primaryId)).map(r=>({primaryId:r.primaryId,mode:r.mode,lunchId:r.mode==='fixed'?r.lunchId:''})));$d('dutyEmployeeNamesOne').value='';$d('dutyEmployeeNamesTwo').value='';renderEmployees();employeeDialog.showModal();
+ };
+ $d('dutyEmployeeForm').onsubmit=async event=>{event.preventDefault();if(!ready())return;captureEmployee();try{
+  let candidate=D.clone(employeeDraft);if(candidate.employees.some(e=>!e.name||e.name.length>30))throw Error('직원 이름을 1~30자로 입력하세요.');
+  for(const site of [dutySite])for(const name of $d(site==='one'?'dutyEmployeeNamesOne':'dutyEmployeeNamesTwo').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean)){if(name.length>30)throw Error('이름은 30자 이내로 입력하세요.');if(candidate.employees.some(e=>e.name===name))throw Error(name+' 직원은 이미 등록되어 있습니다. 소속 이동 버튼을 사용하세요.');candidate.employees.push({id:uid(),name,site,active:true})}
+  if(new Set(candidate.employees.map(e=>e.name)).size!==candidate.employees.length)throw Error('동명이인은 부서를 붙여 구분하세요.');let changed=0,lunchChanged=0;
+  for(const site of [dutySite]){for(const key of ['regularOrder','lunchOrder'])candidate.sites[site].settings[key]=candidate.sites[site].settings[key].filter(id=>candidate.employees.some(e=>e.id===id&&e.site===site&&e.active!==false));
+   const from=$d('dutyStartMonth').value+'-01',assignments=Object.values(employeeRules).filter(row=>row.mode!=='none'&&candidate.employees.some(e=>e.id===row.primaryId&&e.site===site&&e.active!==false));
+   if(D.activeEmployees(candidate,site).length){candidate=D.configureStarts(candidate,site,$d('dutyStartMonth').value,employeeStarts[site],false).duty;const rulesSignature=JSON.stringify([...assignments].sort((a,b)=>a.primaryId.localeCompare(b.primaryId)).map(r=>({primaryId:r.primaryId,mode:r.mode,lunchId:r.mode==='fixed'?r.lunchId:''}))),poolChanged=JSON.stringify(employeeOriginalLunch)!==JSON.stringify(candidate.sites[site].settings.lunchOrder)||rulesSignature!==employeeOriginalRules;const lunchChange=D.savePolicy(candidate,site,{from,mode:'byPerson',assignments},poolChanged);candidate=lunchChange.duty;lunchChanged+=lunchChange.count;if($d('dutyEmployeeApply').checked){const change=D.configureStarts(candidate,site,$d('dutyStartMonth').value,employeeStarts[site],true);candidate=change.duty;changed+=change.count}}
+  }if(!changed&&lunchChanged&&!confirm(siteName()+' '+$d('dutyStartMonth').value+'부터 '+lunchChanged+'일의 점심대체 순서만 다시 계산합니다. 일반 당직자는 유지합니다. 적용할까요?'))return;if(changed&&!confirm('선택한 월부터 본관·분관 '+changed+'일을 다시 배치합니다. 기존 수동 변경도 바뀌며 이전 표는 보관합니다. 계속할까요?'))return;
+  if(await saveDuty(candidate,'직원·시작 인원·점심대체 설정 저장 완료'))employeeDialog.close();
+ }catch(error){alert(error.message)}};
+ function orderEditor(kind){const field=kind==='regular'?'regularOrder':'lunchOrder',id=kind==='regular'?'dutyRegularOrder':'dutyLunchOrder';$d(id).innerHTML=editingSettings[field].map((employee,i)=>'<div class="duty-order-row"><span>'+(i+1)+'. '+esc(D.label(getDuty(),employee))+'</span><button type="button" data-order-up="'+i+'" '+(i===0?'disabled':'')+'>↑</button><button type="button" data-order-down="'+i+'" '+(i===editingSettings[field].length-1?'disabled':'')+'>↓</button><button type="button" data-order-remove="'+i+'">제외</button></div>').join('');
+  for(const action of ['up','down','remove'])$d(id).querySelectorAll('[data-order-'+action+']').forEach(b=>b.onclick=()=>{const i=Number(b.dataset['order'+action[0].toUpperCase()+action.slice(1)]);if(action==='remove')editingSettings[field].splice(i,1);else{const j=i+(action==='up'?-1:1);[editingSettings[field][i],editingSettings[field][j]]=[editingSettings[field][j],editingSettings[field][i]]}orderEditor(kind);if(kind==='lunch'){markLunchChanged();renderLunchCandidates()}})}
+ $d('dutySettings').onclick=()=>{if(!ready())return;const duty=getDuty();editingSettings=D.clone(duty.sites[dutySite].settings);$d('dutyDailyLunch').checked=editingSettings.dailyLunch!==false;$d('dutySettingsTitle').textContent=siteName()+' 점심대체 배치방식·순서';$d('dutyAnchor').value=editingSettings.anchorMonth||dutyMonth;$d('dutyAutoEnabled').checked=editingSettings.anchorMonth?editingSettings.autoEnabled:true;$d('dutyExtraOff').value=(editingSettings.extraOffDates||[]).map(x=>x.date+' '+x.name).join('\n');$d('dutyRegularEmployee').innerHTML=options();$d('dutyLunchEmployee').innerHTML=options();const start=D.nextMonth(dutyMonth)+'-01',rule=D.policyAt(editingSettings,start);$d('dutyPolicyFrom').value=start;$d('dutyPolicyApply').checked=false;editingAssignments={};
+ if(rule&&rule.mode==='byPerson')for(const row of rule.assignments||[])editingAssignments[row.primaryId]=D.clone(row);
+ else if(rule){for(const id of rule.eligibleIds||[])editingAssignments[id]={primaryId:id,mode:'auto'};if(rule.mode==='fixed')editingAssignments[rule.primaryId]={primaryId:rule.primaryId,mode:'fixed',lunchId:rule.lunchId}}
+ else {const defaults=dutySite==='one'?{'본관직원02':'auto','본관직원08':'fixed'}:{'분관직원06':'auto','분관직원02':'auto'},people=D.activeEmployees(duty,dutySite),fixed=people.find(e=>e.name==='본관직원09');for(const e of people){const baseName=e.name.replace(/\s*\(본관직원09\)\s*$/,'');if(defaults[baseName])editingAssignments[e.id]={primaryId:e.id,mode:defaults[baseName],lunchId:defaults[baseName]==='fixed'&&fixed?fixed.id:''}}}
+ renderPersonRules();renderLunchCandidates();$d('dutyAnnexPreset').classList.toggle('hidden',dutySite!=='two');orderEditor('regular');orderEditor('lunch');settingsDialog.showModal()};
+ for(const kind of ['Regular','Lunch'])$d('duty'+kind+'Add').onclick=()=>{const field=kind==='Regular'?'regularOrder':'lunchOrder',id=$d('duty'+kind+'Employee').value;if(id&&!editingSettings[field].includes(id)){editingSettings[field].push(id);orderEditor(kind.toLowerCase());if(kind==='Lunch'){markLunchChanged();renderLunchCandidates()}}};
+ $d('dutySettingsForm').onsubmit=async event=>{event.preventDefault();if(!ready())return;const duty=getDuty(),off=[];for(const line of $d('dutyExtraOff').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean)){const match=/^(\d{4}-\d{2}-\d{2})(?:\s+(.+))?$/.exec(line);if(!match||!D.validDate(match[1])){alert('휴무는 YYYY-MM-DD 사유 형식으로 입력하세요.');return}off.push({date:match[1],name:match[2]||'시설 휴무'})}if(!D.activeEmployees(duty,dutySite).length){alert('당직자 순번에 사용 중인 직원을 추가하세요.');return}
+  duty.sites[dutySite].settings={...editingSettings,dailyLunch:$d('dutyDailyLunch').checked,anchorMonth:$d('dutyAnchor').value,autoEnabled:$d('dutyAutoEnabled').checked,extraOffDates:off};const rule={from:$d('dutyPolicyFrom').value,mode:'byPerson',assignments:Object.values(editingAssignments).filter(row=>row.mode!=='none')};try{const change=D.savePolicy(duty,dutySite,rule,$d('dutyPolicyApply').checked);if(change.count&&!confirm(siteName()+' '+rule.from+'부터 작성된 '+change.count+'일의 배치를 변경합니다. 적용할까요?'))return;if(await saveDuty(change.duty,'배치 방식·점심대체 순서 저장 완료'))settingsDialog.close()}catch(error){alert(error.message)};
+ };
+ async function generate(regenerate){
+  if(!ready())return;if(cloudPending||cloudSaving){alert('저장 완료 후 당직표를 작성하세요.');return}if(regenerate&&!confirm('조회 월을 다시 작성할까요? 기존 월표는 보관하며 수동 수정은 유지합니다.'))return;
+  const site=dutySite,month=dutyMonth;let message='';setDutyBusy(true);status('공휴일 확인 및 당직표 작성 중…');
+  try{const result=regenerate?await rpc('generateDutyMonth',site,month,cloudRevision,true):await rpc('generateDutyWindow',site,month,cloudRevision);
+   if(cloudPending||cloudSaving){cloudBlocked=true;cloudError='당직표 작성 중 다른 변경이 발생했습니다. JSON 백업 후 최신 데이터를 불러오세요.';renderSync();throw Error(cloudError)}
+   status('작성 처리 완료 · 서버 데이터 새로고침 중…');const loaded=await cloudLoad();if(loaded!==true)throw Error(cloudError||'서버 새로고침을 완료하지 못했습니다. 클라우드 새로고침 후 다시 시도하세요.');
+   message=result.created.length?result.created.length+'개월 작성 및 서버 새로고침 완료':'이미 작성된 당직표입니다. 기존 표를 유지하고 새로고침했습니다.';
+  }catch(error){message=/BUSY|잠금|lock/i.test(error.message)?'다른 저장 작업이 진행 중입니다. 잠시 후 다시 눌러 주세요.':'작성 중단: '+error.message}
+  finally{setDutyBusy(false);renderDuty();status(message)}
+ }
+ $d('dutyGenerate').onclick=()=>generate(false);$d('dutyRegenerate').onclick=()=>generate(true);
+ function markLunchChanged(){const month=dutyMonth;$d('dutyPolicyFrom').value=month+'-01';$d('dutyPolicyApply').checked=true;editingSettings.rotationStarts={...(editingSettings.rotationStarts||{}),[month]:{...((editingSettings.rotationStarts||{})[month]||{}),lunchId:editingSettings.lunchOrder[0]||''}}}
+ function renderLunchCandidates(){const people=D.activeEmployees(getDuty(),dutySite);$d('dutyLunchCandidates').innerHTML=people.map(e=>'<label class="duty-person-choice"><input type="checkbox" data-lunch-candidate="'+esc(e.id)+'" '+(editingSettings.lunchOrder.includes(e.id)?'checked':'')+'> '+esc(e.name)+'</label>').join('');$d('dutyLunchCandidates').querySelectorAll('[data-lunch-candidate]').forEach(el=>el.onchange=()=>{const id=el.dataset.lunchCandidate;editingSettings.lunchOrder=el.checked?[...editingSettings.lunchOrder.filter(x=>x!==id),id]:editingSettings.lunchOrder.filter(x=>x!==id);markLunchChanged();orderEditor('lunch')})}
+ $d('dutyAnnexPreset').onclick=()=>{const names=['분관직원01','분관직원03','분관직원04','분관직원07'],people=D.activeEmployees(getDuty(),'two'),missing=names.filter(name=>!people.some(e=>e.name===name));if(missing.length){alert('분관 직원 등록명을 확인하세요: '+missing.join(', ')+' · 다른 이름을 자동 변경하지 않습니다.');return}editingSettings.lunchOrder=names.map(name=>people.find(e=>e.name===name).id);for(const person of people)editingAssignments[person.id]={primaryId:person.id,mode:['분관직원02','분관직원06'].includes(person.name)?'auto':'none'};$d('dutyPolicyFrom').value=dutyMonth+'-01';$d('dutyPolicyApply').checked=true;markLunchChanged();renderPersonRules();renderLunchCandidates();orderEditor('lunch');};
+ function renderPersonRules(){
+ const people=D.activeEmployees(getDuty(),dutySite);$d('dutyPersonRules').innerHTML=people.map(e=>{const row=editingAssignments[e.id]||{mode:'none'};return '<div class="duty-rule-row"><strong>'+esc(e.name)+'</strong><label>점심대체 방식<select data-person-mode="'+esc(e.id)+'"><option value="none" '+(row.mode==='none'?'selected':'')+'>대체 불필요</option><option value="auto" '+(row.mode==='auto'?'selected':'')+'>① 순번 자동매칭</option><option value="fixed" '+(row.mode==='fixed'?'selected':'')+'>② 고정 대체자</option></select></label><label class="'+(row.mode==='fixed'?'':'hidden')+'" data-fixed-label="'+esc(e.id)+'">고정 대체자<select data-person-fixed="'+esc(e.id)+'">'+options(row.lunchId,true)+'</select></label></div>'}).join('');
+ $d('dutyPersonRules').querySelectorAll('[data-person-mode]').forEach(el=>el.onchange=()=>{const id=el.dataset.personMode;editingAssignments[id]={...(editingAssignments[id]||{}),primaryId:id,mode:el.value};$d('dutyPersonRules').querySelector('[data-fixed-label="'+id+'"]').classList.toggle('hidden',el.value!=='fixed')});
+ $d('dutyPersonRules').querySelectorAll('[data-person-fixed]').forEach(el=>el.onchange=()=>{const id=el.dataset.personFixed;editingAssignments[id]={...(editingAssignments[id]||{}),primaryId:id,mode:'fixed',lunchId:el.value}});
+ }
+ $d('dutyKnownOrder').onclick=()=>{const names=dutySite==='one'?['본관직원01','본관직원02','본관직원03','본관직원04','본관직원05','본관직원06','본관직원07','본관직원08']:['분관직원01','분관직원02','분관직원03','분관직원04','분관직원05','분관직원06'],people=D.activeEmployees(getDuty(),dutySite),missing=names.filter(name=>!people.some(e=>e.name.replace(/\s*\(본관직원09\)\s*$/,'')===name));if(missing.length){alert('먼저 같은 소속 직원으로 등록하세요: '+missing.join(', '));return}editingSettings.regularOrder=names.map(name=>people.find(e=>e.name.replace(/\s*\(본관직원09\)\s*$/,'')===name).id);orderEditor('regular');alert('보내주신 일반당직 순서를 설정창에 넣었습니다. 설정 저장 시 이후 자동작성에 반영하며 기존 표의 당직자는 바꾸지 않습니다.');};
+ let dayModeExplicit=false;
+ function dayMode(){return dayDialog.querySelector('[name=dutyDayMode]:checked').value}
+ function autoLunchPreview(){
+  const fixed=dayMode()==='fixed',duty=getDuty(),rule=D.policyAt(duty.sites[dutySite].settings,$d('dutyDayDate').value),eligible=rule&&rule.mode==='byPerson'?(rule.assignments||[]).filter(row=>row.mode==='auto'||row.mode==='fixed').map(row=>row.primaryId):(rule&&rule.eligibleIds)||duty.sites[dutySite].settings.lunchEligibleIds||[];
+  const required=fixed||dayModeExplicit||eligible.includes($d('dutyPrimary').value);$d('dutyLunchRequired').checked=required;$d('dutyLunchRequired').disabled=true;$d('dutyLunchField').classList.toggle('hidden',!required);$d('dutyLunchPerson').disabled=!fixed;$d('dutyDirectorLunch').closest('label').classList.add('hidden');
+  $d('dutyDayHelp').textContent=fixed?'당직자와 고정 점심대체자를 선택하세요. 고정은 이 직원의 당직 차례에만 적용하며 자동 대체 순번을 소모하지 않습니다.':'점심대체 필요 직원 명단에 있는 당직자에게만 자동 배치합니다. 필요 직원·대체 순서는 상단 설정에서 지정하세요.';
+  if(!required){$d('dutyLunchPerson').value='';return}if(fixed)return;
+  try{const month=D.applyDay(duty,dutySite,$d('dutyDayDate').value.slice(0,7),$d('dutyDayDate').value,{primaryId:$d('dutyPrimary').value,assignmentMode:'auto',forceAuto:dayModeExplicit});$d('dutyLunchPerson').value=month.entries[$d('dutyDayDate').value].lunchId}catch(error){$d('dutyDayHelp').textContent=error.message;$d('dutyLunchPerson').value=''}
+ }
+ dayDialog.querySelectorAll('[name=dutyDayMode]').forEach(e=>e.onchange=()=>{dayModeExplicit=true;lunchManual=dayMode()==='fixed';$d('dutyCascade').checked=false;autoLunchPreview()});
+ function openDay(date){if(!ready())return;dayModeExplicit=false;const roster=getDuty().sites[dutySite].months[date.slice(0,7)],entry=roster&&roster.entries[date];if(!entry)return;$d('dutyDayTitle').textContent=siteName()+' '+date+' 인원 추가·수정';$d('dutyDayDate').value=date;$d('dutyPrimary').innerHTML=options(entry.primaryId);$d('dutyLunchPerson').innerHTML=options(entry.lunchId,true);$d('dutyLunchRequired').checked=entry.lunchRequired;lunchManual=!!entry.lunchManual;dayDialog.querySelector('[name=dutyDayMode][value='+(entry.pairFixed||entry.directorLunch?'fixed':'auto')+']').checked=true;$d('dutyDirectorLunch').checked=!!entry.directorLunch;$d('dutyCascade').checked=false;$d('dutyDayHelp').textContent='이날부터 이어 배치를 체크하면 이전 날짜는 유지하고 이후 작성된 모든 월을 변경합니다. 관장님 고정은 선택한 날짜에 적용합니다.';autoLunchPreview();if(!dayDialog.open)dayDialog.showModal()}
+ $d('dutyAssign').onclick=()=>{const roster=getDuty().sites[dutySite].months[dutyMonth];if(!roster)return;const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul'}).format(new Date()),date=roster.entries[today]?today:Object.keys(roster.entries).sort()[0];if(date)openDay(date)};
+ $d('dutyDayDate').onchange=()=>{const date=$d('dutyDayDate').value;if(!getDuty().sites[dutySite].months[date.slice(0,7)]?.entries[date]){$d('dutyDayHelp').textContent='현재 월의 당직일을 선택하세요. 주말과 휴무일은 제외됩니다.';return}openDay(date)};
+ $d('dutyDirectorLunch').onchange=()=>{if($d('dutyDirectorLunch').checked){$d('dutyLunchRequired').checked=true;lunchManual=true}autoLunchPreview()};$d('dutyLunchRequired').onchange=()=>{lunchManual=false;autoLunchPreview()};$d('dutyPrimary').onchange=autoLunchPreview;$d('dutyLunchPerson').onchange=()=>lunchManual=true;
+ $d('dutyDayForm').onsubmit=async event=>{event.preventDefault();if(!ready())return;try{
+  let duty=getDuty();const date=$d('dutyDayDate').value,input={primaryId:$d('dutyPrimary').value,lunchRequired:$d('dutyLunchRequired').checked,lunchId:$d('dutyLunchPerson').value,lunchManual:dayMode()==='fixed',directorLunch:false,assignmentMode:dayMode(),forceAuto:dayModeExplicit&&dayMode()==='auto'};
+  if(input.directorLunch&&!input.lunchRequired)throw Error('관장님 고정은 점심당직을 함께 체크하세요.');
+  if($d('dutyCascade').checked){const existingRule=D.policyAt(duty.sites[dutySite].settings,date)||{},assignments=(existingRule.mode==='byPerson'?existingRule.assignments||[]:(existingRule.eligibleIds||[]).map(id=>({primaryId:id,mode:'auto'}))).filter(row=>row.primaryId!==input.primaryId);assignments.push({primaryId:input.primaryId,mode:input.assignmentMode,lunchId:input.lunchId});const change=D.savePolicy(duty,dutySite,{from:date,mode:'byPerson',assignments},true);if(!confirm(siteName()+' '+date+'부터 이후 작성된 '+change.count+'일을 이어 배치합니다. 이전 날짜와 다른 장소는 유지됩니다. 적용할까요?'))return;duty=change.duty}
+  else duty.sites[dutySite].months[date.slice(0,7)]=D.applyDay(duty,dutySite,date.slice(0,7),date,input);
+  if(await saveDuty(duty,'당직 배치 저장 완료'))dayDialog.close();
+ }catch(error){$d('dutyDayHelp').textContent=error.message}};
+ $d('dutyKey').onclick=()=>{$d('dutyApiKey').value='';keyDialog.showModal()};$d('dutyKeyForm').onsubmit=async event=>{event.preventDefault();try{await rpc('setDutyHolidayApiKey',$d('dutyApiKey').value);$d('dutyApiKey').value='';keyDialog.close();serviceStatus();status('공휴일 인증키 저장 완료')}catch(error){status(error.message)}};
+ $d('dutyAuto').onclick=async()=>{try{await rpc('installDutyMonthAutomation');serviceStatus();status('설치 계정의 Google 캘린더를 알림 대상으로 설정했습니다. 매월 20일 새벽 다음 달 미작성 표를 작성하고 실패하면 그달 남은 날 재시도합니다.')}catch(error){status(error.message)}};
+ $d('dutyPdf').onclick=async()=>{if(!ready())return;const roster=getDuty().sites[dutySite].months[dutyMonth];if(!roster)return;busy=true;status('편집 가능한 PDF를 만드는 중…');try{const bytes=await FacilityDutyPdf.build(roster,siteName());download('당직표_'+siteName()+'_'+dutyMonth+'.pdf',bytes,'application/pdf');status('PDF 다운로드 완료. PDF 양식 입력을 지원하는 앱에서 이름을 수정할 수 있습니다. PDF 수정은 웹앱에 자동 반영되지 않습니다.')}catch(error){status('PDF 생성 실패: '+error.message)}finally{busy=false}};
+ const oldRender=render;render=function(){oldRender();if(tab==='dutyManagement')renderDuty()};
+ nav.addEventListener('click',serviceStatus);if(tab==='dutyManagement')renderDuty();
+})();
+
+</script>

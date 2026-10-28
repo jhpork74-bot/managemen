@@ -476,6 +476,70 @@
           "originalSha256": "1385c2d75eb6e4aa8ce5ae1d54dab30d0bf74b31052c8ba8bf68180e17bc6e1d"
         }
       ]
+    },
+    {
+      "id": "v4.4.12",
+      "title": "잔디 Incoming Webhook 당직변경 링크 알림",
+      "status": "로컬·모의 전송 검증 / 실제 잔디·운영 확인 전",
+      "scope": "서버 저장 후 한국시간·변경일·직접 접속 링크 전송, 개인 시험 후 전체 토픽 전환, 중복 방지, 이미지 미전송",
+      "files": [
+        {
+          "file": "Index.html",
+          "originalSha256": "74ab92bec8014c81ad680e0f2f9aef5239619e0d52bf702f46a5001de25f2d99"
+        },
+        {
+          "file": "DutyChangesUI.html",
+          "originalSha256": "fd6058f33a339d02bea0835f27085f05224dd5b9e98b9166a5afcc0a1f8cf315"
+        },
+        {
+          "file": "duty-changes-ui.js",
+          "originalSha256": "fefd5b2d05b9f779eaf2c334238d5596d6f090b3ec73649bc144adf03f9041bd"
+        },
+        {
+          "file": "build-changes.cjs",
+          "originalSha256": "f56d79cc19fe7163cd8f37b7eb19d8a832f6bf4429543d39fecbe410aa3e3280"
+        },
+        {
+          "file": "JandiNotifications.gs",
+          "originalSha256": "2447e44911079d58ea771d7de49b061c7126642c4ecba9a03104d94c08ea620b"
+        },
+        {
+          "file": "JandiNotificationsUI.html",
+          "originalSha256": "6732ea3346f21303414ad1c1209332f7073dcf629f050b416d70426228d3e50e"
+        },
+        {
+          "file": "jandi-notifications-ui.js",
+          "originalSha256": "4bef43eca009b1a1c7941604696e0080ac004556d4c82a6205d0d81c5baa8733"
+        },
+        {
+          "file": "build-jandi.cjs",
+          "originalSha256": "64d7f2191749a43be139d195ca0b863f10f0857d0d5e43d798c282706492b750"
+        },
+        {
+          "file": "verify-jandi.cjs",
+          "originalSha256": "4bb8074a9a2cb7dd4ffce997d5932ff2a867fffd6e015824eedcf09b423a2df0"
+        },
+        {
+          "file": "verify-jandi-browser.cjs",
+          "originalSha256": "7a3f7e92ed8563162d3dfe1471f18613da538e7401b464301a6dbb7a24201e33"
+        },
+        {
+          "file": "verify-changes-browser.cjs",
+          "originalSha256": "7e40c42c6ea33f63f81b3c6a7746643b6db1c90174243a6032bca8622a6e4a6e"
+        },
+        {
+          "file": "verify-save-browser.cjs",
+          "originalSha256": "7bba9d9c05cad1f3c4613be715f46198e4dd9dfb2a6a17fa6f0a386619711ce3"
+        },
+        {
+          "file": "verify-repairs-browser.cjs",
+          "originalSha256": "e19ac552b066feb73b1826c64767aa1a392d7201a0dc9738cd1b748a345a6412"
+        },
+        {
+          "file": "잔디설치및사용안내.md",
+          "originalSha256": "b228f043180134aeb618694e04922ea74087c5b26bc6d54a48a14634ee175fa5"
+        }
+      ]
     }
   ]
 }

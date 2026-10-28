@@ -1,0 +1,25 @@
+(()=>{
+ 'use strict';
+ const section=document.getElementById('dutyChanges');if(!section)return;
+ const panel=document.createElement('div');panel.className='panel jandi-duty-panel';panel.innerHTML='<h3>잔디 변경 알림</h3><p id="jandiConnection" role="status">잔디 설정 확인 중…</p><p id="jandiDelivery" role="status"></p><div class="flex"><button id="jandiRefresh" type="button">연결 상태 새로 확인</button><button id="jandiRetry" type="button" class="hidden">전송 결과 확인·재시도</button></div><p class="mutedtext">서버에 저장된 변경만 링크로 알립니다. 이미지와 직원 이름은 메시지에 첨부하지 않습니다. 연결 주소·대상 변경은 Apps Script 프로젝트 설정에서 관리합니다.</p>';
+ section.appendChild(panel);let last=null,sending=false;
+ const $j=id=>document.getElementById(id);
+ function rpc(name,...args){return new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('잔디 연결 응답을 확인하지 못했습니다.')),30000);google.script.run.withSuccessHandler(result=>{clearTimeout(timer);resolve(result)}).withFailureHandler(()=>{clearTimeout(timer);reject(Error('잔디 연결 응답을 확인하지 못했습니다.'))})[name](...args)})}
+ async function status(){try{const s=await rpc('getDutyJandiStatus'),mode=s.mode==='topic'?'직원 전체 토픽':'개인 시험 대상 (나와의 대화)';$j('jandiConnection').textContent=!s.enabled?'자동 알림 꺼짐 · Apps Script 설정 후 시험 발송하세요.':!s.baseConfigured?'웹앱 접속 URL 설정이 필요합니다.':s.mode==='topic'&&!s.testPassed?'개인 시험 발송 성공 확인 후 전체 토픽으로 전환하세요.':!(s.mode==='topic'?s.topicConfigured:s.testConfigured)?mode+' 연결 주소 설정이 필요합니다.':'자동 알림 대상: '+mode;return s}catch(error){$j('jandiConnection').textContent=error.message;return null}}
+ async function deliver(context){
+  if(sending)return;last=context;sending=true;$j('jandiRetry').disabled=true;$j('jandiDelivery').textContent='변경 일정 서버 저장 완료 · 잔디 전송 결과 확인 중…';
+  try{const result=await rpc('notifyDutyChangeJandi',context.site,context.eventId,context.mode);$j('jandiDelivery').textContent='변경 일정 서버 저장 완료 · '+(result.message||'잔디 전송 결과 미확인')+(result.sentAt?' ('+result.sentAt+' 한국시간)':'');$j('jandiRetry').classList.toggle('hidden',result.state==='sent')}
+  catch(error){$j('jandiDelivery').textContent='변경 일정 서버 저장 완료 · 잔디 수신 여부 미확인. 결과 확인 버튼을 누르면 같은 변경의 처리 상태를 확인합니다.';$j('jandiRetry').classList.remove('hidden')}
+  finally{sending=false;$j('jandiRetry').disabled=false}
+ }
+ window.DutyJandi={async notify(context){const s=await status();if(!s||!s.enabled){$j('jandiDelivery').textContent='변경 일정 서버 저장 완료 · 잔디는 아직 연결되지 않아 발송하지 않았습니다.';return}await deliver({...context,mode:s.mode||'test'})}};
+ $j('jandiRefresh').onclick=status;$j('jandiRetry').onclick=()=>{if(last)deliver(last)};
+ status();
+ // The host URL is available through Apps Script's API, not the iframe's location.search.
+ if(google.script.url&&typeof google.script.url.getLocation==='function')google.script.url.getLocation(location=>{
+  const q=location.parameter||{};if(q.page!=='dutyChanges')return;
+  if(!['one','two'].includes(q.site)||!/^\d{4}-(0[1-9]|1[0-2])$/.test(q.month||''))return;
+  const date=typeof q.date==='string'&&q.date.startsWith(q.month+'-')&&/^\d{4}-\d{2}-\d{2}$/.test(q.date)?q.date:'';
+  document.dispatchEvent(new CustomEvent('duty-changes-navigate',{detail:{site:q.site,month:q.month,date}}));
+ });
+})();
