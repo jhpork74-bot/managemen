@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "scope": "Local Edge / mocked Google and JANDI RPC. No production deployment or real JANDI message.",
+  "checks": [
+    "multiple saved edits produce zero posts until manual click",
+    "image preview using snapshot data",
+    "per-month and site change sequence",
+    "no web-app URL in message",
+    "lost receipt check without duplicate upload/post",
+    "new-file-only Drive sharing",
+    "image access failure before post",
+    "test/topic routes",
+    "save failure sends no image",
+    "original duty and repairs/cloud save regressions",
+    "360/390px"
+  ]
+}

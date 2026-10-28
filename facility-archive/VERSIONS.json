@@ -480,7 +480,7 @@
     {
       "id": "v4.4.12",
       "title": "잔디 Incoming Webhook 당직변경 링크 알림",
-      "status": "로컬·모의 전송 검증 / 실제 잔디·운영 확인 전",
+      "status": "사용자 잔디 텍스트 수신 확인 + 로컬 검증",
       "scope": "서버 저장 후 한국시간·변경일·직접 접속 링크 전송, 개인 시험 후 전체 토픽 전환, 중복 방지, 이미지 미전송",
       "files": [
         {
@@ -538,6 +538,75 @@
         {
           "file": "잔디설치및사용안내.md",
           "originalSha256": "b228f043180134aeb618694e04922ea74087c5b26bc6d54a48a14634ee175fa5"
+        }
+      ],
+      "userConfirmed": "2026-10-28: Incoming Webhook 메시지 수신. 이미지 첨부는 v4.4.13에서 추가하며 실수신 확인 전."
+    },
+    {
+      "id": "v4.4.14",
+      "title": "잔디 수동 전송·고장공사 버튼 한 줄 정렬",
+      "status": "로컬·모의 전송 검증 / 실제 잔디·운영 확인 전",
+      "scope": "저장과 전송 분리, 제목 옆 수동 이미지 전송 버튼, 고장공사 취소/저장 우측 한 줄과 5글자 간격, 기존 데이터 보존",
+      "files": [
+        {
+          "file": "Index.html",
+          "originalSha256": "979ab95abfd77243a57aaccefcbad1efcf18449f8011d8467e37306c90f89270"
+        },
+        {
+          "file": "DutyChangesUI.html",
+          "originalSha256": "eed1af2d38b4e3da6306a8916714c08960480eecdacd09a3b2aa54df8a9ebbf5"
+        },
+        {
+          "file": "duty-changes-ui.js",
+          "originalSha256": "88424ba72010629e01d06ebc014fa2aec0ecce3a058b9e83dd9aa05d16ef48db"
+        },
+        {
+          "file": "JandiNotifications.gs",
+          "originalSha256": "2b2760424b8bbc73c08c6f20d000616a003ecf51a3b070f31a7805a45c188fd4"
+        },
+        {
+          "file": "JandiNotificationsUI.html",
+          "originalSha256": "031e9c32b3af0f3fad08097514565fd2c3b2699a548fee5a77ef28058aee2163"
+        },
+        {
+          "file": "jandi-image-notify.js",
+          "originalSha256": "bcfce1c5feefe67a04b396630697f3bba9a60de7d6171f47637f88112e4dac8f"
+        },
+        {
+          "file": "jandi-notifications-ui.js",
+          "originalSha256": "1cb0d173282a570607a84512aec5b98cdabac95642dab94e4448b3d8d65bd417"
+        },
+        {
+          "file": "build-jandi.cjs",
+          "originalSha256": "2250ff98109a996a0103b312a1f48b6ca8d1896395d791ef2f7729effc9ab96d"
+        },
+        {
+          "file": "RepairsManagementUI.html",
+          "originalSha256": "fe09ea6e07cd9b62cd8df8d58aa7b195e8eaff6b2012c8b696b3261b2c483dc8"
+        },
+        {
+          "file": "repairs-markup.html",
+          "originalSha256": "4cbd2ce76207c4d2989be672048aecba7f3c5a0d2b0db15878b2adbc8a28b26a"
+        },
+        {
+          "file": "repairs.css",
+          "originalSha256": "040555e32edebbd5b7775c12cb0939ebc9e94e2328c463e57da20569888cad0b"
+        },
+        {
+          "file": "verify-jandi.cjs",
+          "originalSha256": "d35c4c9911169fb261ac75af8d68982f9eac3f33a392e4572a5fbacf1b6825ff"
+        },
+        {
+          "file": "verify-jandi-browser.cjs",
+          "originalSha256": "0ce9e63da9cd5020618953c5ecff9c3a41b112696c045423aced2f09754f1f3c"
+        },
+        {
+          "file": "verify-repairs-browser.cjs",
+          "originalSha256": "88a7b87e4e61524aa84c4d6fd32c80d18cb2b74b6b72c1094a037b45674ed89a"
+        },
+        {
+          "file": "두가지수정_설치안내.md",
+          "originalSha256": "acab554f53581d38c6021a5a417bc3a23de74992aabcf0677158a97aa146dd7c"
         }
       ]
     }
