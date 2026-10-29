@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-29",
+  "passed": true,
+  "scope": "Local mocked identities, configuration, Drive, Sheets, JANDI and Edge regressions. No live two-account verification, deployment or JANDI image receipt.",
+  "checks": [
+    "single or comma-separated admin list",
+    "both registered identities accepted without switching settings",
+    "anonymous, unregistered and mismatched settings execution rejected",
+    "normalization and self-lockout prevention",
+    "read-only account and JANDI diagnosis without credentials or posts",
+    "existing duplicate-send protection preserved",
+    "private company-photo and storage/undo/browser regressions"
+  ]
+}

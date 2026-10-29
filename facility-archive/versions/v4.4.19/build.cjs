@@ -1,0 +1,6 @@
+const fs=require('fs'),path=require('path'),crypto=require('crypto'),vm=require('vm'),dir=__dirname,read=file=>fs.readFileSync(path.join(dir,file),'utf8');
+const sri=file=>'sha384-'+crypto.createHash('sha384').update(fs.readFileSync(path.join(dir,'assets',file))).digest('base64');
+const pdf=read('pdf-export.js').replace('__PDF_SRI__',sri('pdf-lib.min.js')).replace('__FONTKIT_SRI__',sri('fontkit.umd.min.js')).replace('__FONT_SHA256__',crypto.createHash('sha256').update(fs.readFileSync(path.join(dir,'assets/NanumGothic-Regular.ttf'))).digest('hex'));
+const html='<!-- 당직인원관리 전용 화면 -->\n<style>\n'+read('styles.css')+'\n</style>\n<script>\n'+read('duty-core.js')+'\n'+pdf+'\n'+read('ui.js')+'\n</script>\n';new vm.Script(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
+fs.writeFileSync(path.join(dir,'DutyManagementUI.html'),html);fs.writeFileSync(path.join(dir,'DutyRosterCore.gs'),read('duty-core.js'));fs.writeFileSync(path.join(dir,'DutyManagement.gs'),read('server.js'));
+const server=['INI.gs','Code.gs','FacilityStorage.gs','DutyRosterCore.gs','DutyManagement.gs'].map(read).join('\n');new vm.Script(server);console.log('Built dedicated DutyManagementUI.html, DutyRosterCore.gs and DutyManagement.gs; server syntax OK.');

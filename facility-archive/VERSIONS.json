@@ -889,6 +889,38 @@
           "originalSha256": "d6cfedb8e2afe3424be07910f58ab7291a018af916c163922c95efd7ac275c68"
         }
       ]
+    },
+    {
+      "id": "v4.4.19",
+      "title": "개인·회사 관리자 함께 등록",
+      "status": "로컬·모의 검증 / 실제 두 계정 운영 확인 전",
+      "scope": "복수 관리자 허용 목록·단일 설정 호환·자가 잠금 방지·읽기 전용 계정/잔디 진단",
+      "files": [
+        {
+          "file": "INI.gs",
+          "originalSha256": "40a6af449d218dd0826ae7dfff0c69fba9b186cf2adf4d75e803504e0cd36357"
+        },
+        {
+          "file": "INI.CS",
+          "originalSha256": "40a6af449d218dd0826ae7dfff0c69fba9b186cf2adf4d75e803504e0cd36357"
+        },
+        {
+          "file": "ConnectionSettings.gs",
+          "originalSha256": "dd3cc284ea573105c80051071607066831c890693e926c264d6b259c398c277e"
+        },
+        {
+          "file": "JandiNotifications.gs",
+          "originalSha256": "bba73427f636a85bebce621f9b4924940f1200f1a1728e9dc2a378ea46572bf0"
+        },
+        {
+          "file": "verify-multi-admin.cjs",
+          "originalSha256": "a1e6e627a106806f555ec391e079ba3ef893d24cf71c0fb125efd052debad242"
+        },
+        {
+          "file": "개인회사계정_설치안내.md",
+          "originalSha256": "ff7fecbd245912e2e1c96bb048a863b20adf9983c57ba8d66c9a44b39c8fae72"
+        }
+      ]
     }
   ]
 }
