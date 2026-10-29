@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-29",
+  "passed": true,
+  "scope": "Local mocked identities/Drive/Sheets/RPC and Edge. User installation diagnostic confirms folder configured and readable but old deployed shared photo module; successful CSFS upload after replacement not yet confirmed.",
+  "checks": [
+    "complete 7 HTML/15 GS set",
+    "selected registration month, add exactly one draft, edit/delete, stable retry IDs",
+    "signed private company photo storage and canonical reads",
+    "CSFS settings row prefill uses public placeholder",
+    "existing data/unknown fields/other months preserved",
+    "manual confirm resend and top action group",
+    "legacy storage/roster/undo/popup regressions",
+    "360/390px"
+  ]
+}

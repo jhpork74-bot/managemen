@@ -921,6 +921,234 @@
           "originalSha256": "ff7fecbd245912e2e1c96bb048a863b20adf9983c57ba8d66c9a44b39c8fae72"
         }
       ]
+    },
+    {
+      "id": "v4.4.22",
+      "title": "CSFS 게시판·회사 사진·상단 버튼 정렬",
+      "status": "로컬·모의 검증 / 운영 설치 점검 중",
+      "scope": "완전한 HTML7/GS15 소스, 기존 데이터 보존, CSFS 월별 등록과 사진, 공유 사진 모듈 최신 설치 필요",
+      "files": [
+        {
+          "file": "Index.html",
+          "originalSha256": "19092cf7884c8bcc513d8bedbd5399302c18f43d9c0bcb6b8dfa2639408bdb99"
+        },
+        {
+          "file": "DutyManagementUI.html",
+          "originalSha256": "310bcac3f69d23f53b9537238da6ae3de0622b932866a2d2a470b59b75aa2a41"
+        },
+        {
+          "file": "DutyChangesUI.html",
+          "originalSha256": "4e8d1594e951b93002c4ac898d5d2abf1687864258364fdb0ae4393ee679c494"
+        },
+        {
+          "file": "RepairsManagementUI.html",
+          "originalSha256": "4c82b56597feb1f983f72c5483efce2518b2abd590bf66264007df9522d52884"
+        },
+        {
+          "file": "JandiNotificationsUI.html",
+          "originalSha256": "641e5337574b3453ddeb4fb090936c33d0d2679ada1c20aff3e264eb7cb093bf"
+        },
+        {
+          "file": "PopupBehaviorUI.html",
+          "originalSha256": "19d1ff97414c72c98d813a17bdd1f455da94e74b769eb8ccc0447ac84b240743"
+        },
+        {
+          "file": "CSFSManagementUI.html",
+          "originalSha256": "0c7e45090ad5d65855d135d4c766c376d79400ea9373745e370a85c5e4186e87"
+        },
+        {
+          "file": "Code.gs",
+          "originalSha256": "6aa013e5930b16bce312575863f42bf95b8b81b39949d3c14deb87dc9d0b2351"
+        },
+        {
+          "file": "INI.gs",
+          "originalSha256": "7de1cc0f600810fee1d698a22d7c633979425b198c539416dd6607ef5ab33492"
+        },
+        {
+          "file": "ConnectionSettings.gs",
+          "originalSha256": "fc0b98d331793251907bda2f4576f50614a2a3c4be1c68e2984272bb5ce245d2"
+        },
+        {
+          "file": "RepairPhotoStorage.gs",
+          "originalSha256": "ee69338bd6e51650d6d8680334f615ddd53412e453314a3fe014880fe3925d1c"
+        },
+        {
+          "file": "CSFSManagement.gs",
+          "originalSha256": "2be9fae6cbdbcefd4127dba766379497345a27b383dc3347154324570d434cee"
+        },
+        {
+          "file": "FacilityStorage.gs",
+          "originalSha256": "bce846ec2a17b36fbd7556c08436397ef04d6731e09aacfea33d8464b4c5d524"
+        },
+        {
+          "file": "DutyRosterCore.gs",
+          "originalSha256": "4f83287f10ee30a05043d428097737abb48e7b5d88d0392e0732f3f1102c7bf3"
+        },
+        {
+          "file": "DutyManagement.gs",
+          "originalSha256": "a127bcc54e3b1c27d1885f13e8c4867e74b83a3a28e809a9b28a2b75af587895"
+        },
+        {
+          "file": "DutyChanges.gs",
+          "originalSha256": "9e8eab35afccae639aef0ce1dd040389608b5429a1af856dacb8d2c91f73c84f"
+        },
+        {
+          "file": "RepairsManagement.gs",
+          "originalSha256": "78875d79d6a6eefd097177e25085d43b5951fe1790ef64f4a0cefc4e15a93b9d"
+        },
+        {
+          "file": "JandiNotifications.gs",
+          "originalSha256": "fabd05b6f8d5ab1b591d68e123998bb7d7ec6831ca03d3a3bdeb9f8344352017"
+        },
+        {
+          "file": "JandiCalendarImages.gs",
+          "originalSha256": "91aafd0bfeadfdfc14e47e87e0b6cf63f12baa4eba7b0c9c29c662ff6f961712"
+        },
+        {
+          "file": "PopupBehavior.gs",
+          "originalSha256": "fb0750006de0144373ee9664763bde0d7d7fd4a90c2f53ed76c5a341a4aaecf3"
+        },
+        {
+          "file": "CalendarReminders.gs",
+          "originalSha256": "d0685adfb7cb15662c04f8fab080950f6ccf242100fda05ce5f41589dbaf5efc"
+        },
+        {
+          "file": "NoEndRepeats.gs",
+          "originalSha256": "0f534bc2af427ba8a4414738619aa7361211a0d25f1f44c864745c823336da3f"
+        },
+        {
+          "file": "INI.CS",
+          "originalSha256": "7de1cc0f600810fee1d698a22d7c633979425b198c539416dd6607ef5ab33492"
+        },
+        {
+          "file": "base-index.html",
+          "originalSha256": "b63b1e9414d82fe7d758a2013421292052ed5cb98c5186592b9b98d5f6bf9b06"
+        },
+        {
+          "file": "build-release.cjs",
+          "originalSha256": "4e1ef1c832ddb0197248a7d8a74d9d29aa38b7943ff620011bfbaf938b911266"
+        },
+        {
+          "file": "build-csfs.cjs",
+          "originalSha256": "68f7bc3a8957f11a243bfba4256a8dd84d21f9d157dc87f81bae18c024fc9770"
+        },
+        {
+          "file": "csfs-core.js",
+          "originalSha256": "af1d944d8e856e0f9f5ea60b0ef09e9fbe11574120903d2f42a0401535cbe4ac"
+        },
+        {
+          "file": "csfs-service.js",
+          "originalSha256": "556d64b582b8288ce06362c7cf95377d19269196a5c5658a95d90545e9417d96"
+        },
+        {
+          "file": "csfs-ui.js",
+          "originalSha256": "276014674bd01d0b66a767a0f69f37ce8be7be0d02efaf781eecfc8e576a4fb2"
+        },
+        {
+          "file": "csfs.css",
+          "originalSha256": "19648710910a48f560261271dc499e0afb562a955424703edeca5515c448e0ed"
+        },
+        {
+          "file": "jandi-notifications-ui.js",
+          "originalSha256": "99be11a63a6f9682225d60041cfb95cc213368ef3f6c0a92413e1587d14ca237"
+        },
+        {
+          "file": "popup-behavior.js",
+          "originalSha256": "3788e9e54384ac67d3c3f7d29f6130945ac734a98f51eaccb2db7d901d447c61"
+        },
+        {
+          "file": "verify-browser-upgrade.cjs",
+          "originalSha256": "af49c9d4043ba242db8d7fba8e869617f70f32e7a139df02d22ca0ccec9637e5"
+        },
+        {
+          "file": "verify-changes-browser.cjs",
+          "originalSha256": "8889951d5d48db2e95bed2167aef08e5d8b6d44f072e6836e07f50900c60582f"
+        },
+        {
+          "file": "verify-changes.cjs",
+          "originalSha256": "82b9b0f89940cd92783a433b196fc07736c3dbcf75e23c1c686d381b71833f56"
+        },
+        {
+          "file": "verify-connection-sheet.cjs",
+          "originalSha256": "35b993cbcdc1897941497a07eb7ed4c7a233e0acb5e0c325a443f91b3ab35f1c"
+        },
+        {
+          "file": "verify-csfs-browser.cjs",
+          "originalSha256": "603e5f9bbfaba65354dcb2a9f31632b9bd830f006d10ce1b3b59e7527533b53f"
+        },
+        {
+          "file": "verify-csfs-settings.cjs",
+          "originalSha256": "f18af8647bd6722cc712f1ccbcbd6d40973866850c00bdfe1a0c91dba32eacc0"
+        },
+        {
+          "file": "verify-csfs.cjs",
+          "originalSha256": "6850d74dd4eae9a60bdc8d578c8ed68139c51ffbfcb47b8feeb55a4383ec8224"
+        },
+        {
+          "file": "verify-ini.cjs",
+          "originalSha256": "7a6658b3da330286079c222dfd26e98ccae5f866dce81a5fecdb00b98054aac0"
+        },
+        {
+          "file": "verify-jandi-browser.cjs",
+          "originalSha256": "53229a63362a74982d99af515d742118f1a67ebd7c2e4a0cb64db03531abe639"
+        },
+        {
+          "file": "verify-jandi-resend-browser.cjs",
+          "originalSha256": "afffd44da9f5845c712c6777df9287c1b7da8905549fc051cf17fd18fb9a2361"
+        },
+        {
+          "file": "verify-jandi-resend.cjs",
+          "originalSha256": "d508e2909c4654f4fa6dd72655fd38ca2a54861c44a99b05040d3860953e454b"
+        },
+        {
+          "file": "verify-jandi.cjs",
+          "originalSha256": "3378cf0165ebee359a041a6c622fd615a430fea42cd0f327120249b2982a9d81"
+        },
+        {
+          "file": "verify-multi-admin.cjs",
+          "originalSha256": "a1e6e627a106806f555ec391e079ba3ef893d24cf71c0fb125efd052debad242"
+        },
+        {
+          "file": "verify-reliable-storage.cjs",
+          "originalSha256": "7236d0bcc8041885567ee6a301090a74d4fc8f403f95361e5284e18857b7a0d4"
+        },
+        {
+          "file": "verify-repair-drive.cjs",
+          "originalSha256": "d73409cabf976d42d273fcd46a7890bb163b55e829710abeb1f8672d48e266a3"
+        },
+        {
+          "file": "verify-repairs-browser.cjs",
+          "originalSha256": "e9ff163c9bb4a2fd3ace119174ce3ed2100f98758320ddd7ca80c2755b419f10"
+        },
+        {
+          "file": "verify-repairs.cjs",
+          "originalSha256": "5ff56778a2d0f77ed5ee6e3fa7e9db367eaa5994a68ab91fd5cb3d665142ee8a"
+        },
+        {
+          "file": "verify-save-browser.cjs",
+          "originalSha256": "725bdda6df11a73086f8453399c77cf35aca7c7140265ff180d11d7c26b27348"
+        },
+        {
+          "file": "verify-storage.cjs",
+          "originalSha256": "5913f088af9fc15dc988e9e4a0ef15c1b3da987ef77b2351f978730d799248cc"
+        },
+        {
+          "file": "verify-undo-popups-browser.cjs",
+          "originalSha256": "ce901a8e18dec59b4047a7b351ecb26ceffdc244a52a12607d15d98ec3e67cf4"
+        },
+        {
+          "file": "verify-undo.cjs",
+          "originalSha256": "f70ec30ae909f4fcf0bf9607e93050292eee1be2aad85e91b742595622931d83"
+        },
+        {
+          "file": "CSFS_설치안내.md",
+          "originalSha256": "ff4f9195ac45abdd2dfb7130b64d0efc7e017991ea55434d9adecc44562eaf5f"
+        },
+        {
+          "file": "잔디재전송_설치안내.md",
+          "originalSha256": "0386fb576c8bba1b01bda2fd2aa810dd38ef63e0aea80dad69fbc2d4dc4c5136"
+        }
+      ]
     }
   ]
 }
