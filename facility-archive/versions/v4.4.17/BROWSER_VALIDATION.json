@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-29",
+  "passed": true,
+  "scope": "Local mocked Sheets/configuration/storage/calendar/JANDI and Edge regressions; no production sheet creation/deployment/Drive write/JANDI receipt",
+  "checks": [
+    "non-secret settings sheet with proposal and current columns",
+    "explicit apply through shared validation and original lock",
+    "pending edits retained on setup refresh",
+    "formulas, missing, unknown, duplicate keys and stale baselines rejected",
+    "admin-only apply; no new secrets in sheet",
+    "same-name unrelated sheet and operational data preserved",
+    "bound menu with standalone-editor fallback",
+    "20 regression tests"
+  ]
+}

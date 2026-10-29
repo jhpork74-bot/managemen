@@ -797,6 +797,34 @@
           "originalSha256": "f70ec30ae909f4fcf0bf9607e93050292eee1be2aad85e91b742595622931d83"
         }
       ]
+    },
+    {
+      "id": "v4.4.17",
+      "title": "스프레드시트 연결설정",
+      "status": "로컬·모의 검증 / 실제 운영 확인 전",
+      "scope": "설정 시트 입력·현재값 비교·명시적 적용, 바운드 시트 메뉴와 독립형 함수 지원, 원본 보존",
+      "files": [
+        {
+          "file": "INI.gs",
+          "originalSha256": "ee17e3d80f40144898b14c7ba1736c1f48fa3d3e89d00c8c939c3e659c0e47ab"
+        },
+        {
+          "file": "INI.CS",
+          "originalSha256": "ee17e3d80f40144898b14c7ba1736c1f48fa3d3e89d00c8c939c3e659c0e47ab"
+        },
+        {
+          "file": "ConnectionSettings.gs",
+          "originalSha256": "21c05508f99839361417712612f348164fe4393999705fb8e07673f543537e51"
+        },
+        {
+          "file": "verify-connection-sheet.cjs",
+          "originalSha256": "ad815ae4cca34b6279dd23a74f3d43d96058dc52ba411512a467663b51b98a04"
+        },
+        {
+          "file": "시트연결설정_설치안내.md",
+          "originalSha256": "7804980568b1d70a44c44cdfbe02ccabcc8094f5a71e8ab3700ee166bdd3f42c"
+        }
+      ]
     }
   ]
 }
