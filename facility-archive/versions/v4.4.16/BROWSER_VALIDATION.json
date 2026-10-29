@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-29",
+  "passed": true,
+  "scope": "Local mocked settings/storage/calendar/JANDI and Edge regression tests; no production deployment, real Drive write or real JANDI message",
+  "checks": [
+    "INI.CS and INI.gs identical",
+    "empty keeps legacy connection and secrets",
+    "folder URL validation and property backup",
+    "in-flight image/calendar/report guard",
+    "data sheet and existing calendar migration blocked",
+    "unauthorized settings change blocked",
+    "all prior workflow regressions"
+  ]
+}

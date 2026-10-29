@@ -689,6 +689,114 @@
           "originalSha256": "04d6a6d9a6f9dc9b6d69c1411d04a058364847a3eed4acc548d783fc5b6d6173"
         }
       ]
+    },
+    {
+      "id": "v4.4.16",
+      "title": "연결 설정 통합·달력 JPG 폴더 교체",
+      "status": "로컬·모의 검증 / 실제 운영 확인 전",
+      "scope": "INI.CS 설정 원본과 INI.gs 런타임, 기존 설정 승계, 폴더 변경 사전 검사와 이전 값 보관",
+      "files": [
+        {
+          "file": "Code.gs",
+          "originalSha256": "6aa013e5930b16bce312575863f42bf95b8b81b39949d3c14deb87dc9d0b2351"
+        },
+        {
+          "file": "FacilityStorage.gs",
+          "originalSha256": "bce846ec2a17b36fbd7556c08436397ef04d6731e09aacfea33d8464b4c5d524"
+        },
+        {
+          "file": "CalendarReminders.gs",
+          "originalSha256": "d0685adfb7cb15662c04f8fab080950f6ccf242100fda05ce5f41589dbaf5efc"
+        },
+        {
+          "file": "DutyManagement.gs",
+          "originalSha256": "a127bcc54e3b1c27d1885f13e8c4867e74b83a3a28e809a9b28a2b75af587895"
+        },
+        {
+          "file": "JandiNotifications.gs",
+          "originalSha256": "c11efa98d73d8efab6e8c82d05052aac7ed18bcff4079dd3c59117307815759c"
+        },
+        {
+          "file": "JandiCalendarImages.gs",
+          "originalSha256": "7c5d22fb1cf2212ed8aef734a1f47bd08f258b8436b0239f6c902a754ab3061c"
+        },
+        {
+          "file": "INI.gs",
+          "originalSha256": "18c35d0f0dd39c5cee162140186c30361e3370f63799cabc39988060b0407dd0"
+        },
+        {
+          "file": "INI.CS",
+          "originalSha256": "18c35d0f0dd39c5cee162140186c30361e3370f63799cabc39988060b0407dd0"
+        },
+        {
+          "file": "build-ini.cjs",
+          "originalSha256": "23e54e1518a993e9af68aaf3c13687c8fa8cc131a94b58235669a8fe0b5006a5"
+        },
+        {
+          "file": "server.js",
+          "originalSha256": "a127bcc54e3b1c27d1885f13e8c4867e74b83a3a28e809a9b28a2b75af587895"
+        },
+        {
+          "file": "build.cjs",
+          "originalSha256": "f30ba301f1310cdf19e77c9660952941adca049dbf8374ec40e24f050337da57"
+        },
+        {
+          "file": "연결설정_설치안내.md",
+          "originalSha256": "39910ce326dd89619f629deea44c1fb2bd7d7de28a9deb259770f8161af7c8b9"
+        },
+        {
+          "file": "verify-browser-upgrade.cjs",
+          "originalSha256": "8635fbd627b4d0396203dc92b0579dca24255b5fc75f99d30f86d952ccda8ffc"
+        },
+        {
+          "file": "verify-changes-browser.cjs",
+          "originalSha256": "2916c2217d1f49421c39b8ac66d594f79f6a8ef1d9f50f595e59d1662dabab6b"
+        },
+        {
+          "file": "verify-changes.cjs",
+          "originalSha256": "82b9b0f89940cd92783a433b196fc07736c3dbcf75e23c1c686d381b71833f56"
+        },
+        {
+          "file": "verify-ini.cjs",
+          "originalSha256": "7a6658b3da330286079c222dfd26e98ccae5f866dce81a5fecdb00b98054aac0"
+        },
+        {
+          "file": "verify-jandi-browser.cjs",
+          "originalSha256": "7556e8891df99af6d23c7e18ca68989050c6f3059bb20d2fd9cf685b6752aacb"
+        },
+        {
+          "file": "verify-jandi.cjs",
+          "originalSha256": "3378cf0165ebee359a041a6c622fd615a430fea42cd0f327120249b2982a9d81"
+        },
+        {
+          "file": "verify-reliable-storage.cjs",
+          "originalSha256": "7236d0bcc8041885567ee6a301090a74d4fc8f403f95361e5284e18857b7a0d4"
+        },
+        {
+          "file": "verify-repairs-browser.cjs",
+          "originalSha256": "3510770b6ede5280905daca5fd79b664ceb4f472092dc69e4f162ecde415e28c"
+        },
+        {
+          "file": "verify-repairs.cjs",
+          "originalSha256": "b5b33314d3c55a0ed5fe0b834642ebed380cfe96e8c63fed38b01e7f5d59e7b9"
+        },
+        {
+          "file": "verify-save-browser.cjs",
+          "originalSha256": "081af6df73585f41c1cb1a85c4b039c147efce34025b2f04e57e459a96d5dca8"
+        },
+        {
+          "file": "verify-storage.cjs",
+          "originalSha256": "5913f088af9fc15dc988e9e4a0ef15c1b3da987ef77b2351f978730d799248cc"
+        },
+        {
+          "file": "verify-undo-popups-browser.cjs",
+          "originalSha256": "043aa83e9d32a1f7a03f0bc357ea6b3fd711dad0bb0a70fd62281d50c8251533"
+        },
+        {
+          "file": "verify-undo.cjs",
+          "originalSha256": "f70ec30ae909f4fcf0bf9607e93050292eee1be2aad85e91b742595622931d83"
+        }
+      ]
     }
   ]
 }
