@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-29T10:28:32.765Z",
+  "checkedAt": "2026-10-29T11:19:37.133Z",
   "scope": "JavaScript syntax / mocked Node tests / selected local Edge browser tests; no production deployment or actual mobile camera",
   "results": [
     {
@@ -802,6 +802,132 @@
     },
     {
       "version": "v4.4.17",
+      "test": "verify-upgrade.cjs",
+      "passed": true,
+      "output": "PASS core: affiliation migration/filtering/transfer, daily two-person rows, holiday skip, cascade across months with past+other-site preservation, fixed lunch no rotation consumption.\nPASS server: 20th schedules following month, notice after commit, no duplicate event, trigger dedup, notification calendar fixed, atomic holiday failure and conflict guard, unknown data preserved. Google services mocked.\nPASS window backfill: missing previous/next months, existing center untouched, primary rotation aligned to existing center."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-browser-upgrade.cjs",
+      "passed": true,
+      "output": "PASS browser single-flight generation through reload and failure recovery, building-scoped employee editor, delete cancellation/save/undo plus: three month panels, site-only staff selectors, unassigned fixed substitute save with affiliation preserved, second-row conditional visibility, site-only auto preview, transfer affiliation, settings pool, 360/390 no horizontal overflow. Google RPC mocked."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-changes-browser.cjs",
+      "passed": true,
+      "output": "PASS changes browser: menu placement, automatic baseline display, immediate saved pair change, before/after names only, new primary without lunch clears old substitute, original unchanged, server ACK, mobile no overflow. Mocked RPC."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-changes.cjs",
+      "passed": true,
+      "output": "PASS duty changes: read-only baseline view, full primary/substitute pair snapshots, incoming rule preview, removal of obsolete substitute, immediate override/history, cancellation retains history, no-op and invalid selection protection, original/unknown data preserved."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-connection-sheet.cjs",
+      "passed": true,
+      "output": "PASS sheet settings: create/read/current/pending columns; explicit apply; input retention; secret exclusion; formula/key/duplicate/missing/stale/bad folder checks; original-data isolation; admin-only apply; same-name sheet preservation; six-row upgrade and active-upload folder guard. Mocked Google Sheets."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-delete.cjs",
+      "passed": true,
+      "output": "PASS delete/undo: exact month/site scope, original+staff+settings+other months untouched, archived undo, duplicate/invalid protection, automatic target and gap regeneration suppressed, manual regeneration re-enabled, root data+conflict protection. Mocked services only.\nPASS repeated generation: a fully written window is a read-only no-op even with a stale request revision."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-ini.cjs",
+      "passed": true,
+      "output": "INI PASS: empty preserves legacy; URL normalization; folder validation; pending/lease protection; original data and secrets retained; one-step previous values; spreadsheet/calendar migration guard; unauthorized calls blocked."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-jandi-browser.cjs",
+      "passed": true,
+      "output": "PASS manual image browser: title button; two dates saved with ZERO posts; one click sends latest whole month; repeated click dedup; more edits without post; next explicit click sends new image; lost ACK check no repost; empty month no send; conflict no send; original preserved; 360/390px. Mocked RPC, no real JANDI."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-jandi.cjs",
+      "passed": true,
+      "output": "PASS mocked image delivery: distinct JPEG and message for each change, per-month sequence, dedup, no app link, new image files only shared, external preview verified, stale capture blocked, file reused on retry, unknown no repost, admin/topic guard, no external operations under original lock. Actual Drive/JANDI not tested."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-locks.cjs",
+      "passed": true,
+      "output": "PASS reliable storage: immediate canonical ACK; single batched slot write; lost-ACK idempotency; no-op and conflict checks; failed slot keeps commit; post-commit marker failure stays successful; deferred/coalesced reports and latest revision; shrinking payload; Calendar lease without canonical lock; worker dedup. Google APIs mocked."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-modes.cjs",
+      "passed": true,
+      "output": "PASS new modes: eligible-only lunch, noneligible and fixed days consume no lunch rotation, continuity across months, fixed pairs persist into newly generated months, fixed→auto restores primary rotation, before-date and other-site preservation, invalid selection rejection."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-person-rules.cjs",
+      "passed": true,
+      "output": "PASS user examples: exact 8-person main/6-person annex sequence over November+December, eligible main employee auto, fixed main pair fixed only on own turns, annex two annex employees auto, independent lunch cursors, substitute-only DEMO_SUBSTITUTE excluded from primary, applying lunch rules preserves all November primary assignments and pre-start snapshots.\nPASS starting staff: requested primary/lunch starts used in new month, existing November retained by default, explicit rebuild archived and site independent, cross-site starts rejected."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-reliable-storage.cjs",
+      "passed": true,
+      "output": "PASS reliable storage: immediate canonical ACK; single batched slot write; lost-ACK idempotency; no-op and conflict checks; failed slot keeps commit; post-commit marker failure stays successful; deferred/coalesced reports and latest revision; shrinking payload; Calendar lease without canonical lock; worker dedup. Google APIs mocked."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-repair-drive.cjs",
+      "passed": true,
+      "output": "PASS repair Drive: separate/fallback folder, private files, upload-before-JSON, all photo slots, idempotent retry/lost result recovery, revision/pending guard, original preservation, signed canonical read and forged-file rejection, no Drive I/O under canonical lock."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-repairs-browser.cjs",
+      "passed": true,
+      "output": "PASS: split module; legacy/unknown data preserved; before/during/after compressed and persisted; cancel fallback; invalid file and unsaved cancel preserve photos; deletion isolated; fault edit; ACK failure retains editor; 360/390px. Camera OS behavior NOT verified."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-repairs.cjs",
+      "passed": true,
+      "output": "PASS: photo merge preserves legacy and unknown fields; unsafe image schemes rejected; all GS/HTML scripts parse; repair DOM/logic/CSS extracted from Index."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-save-browser.cjs",
+      "passed": true,
+      "output": "PASS save browser: response loss uses same request ID with one canonical commit; edits during retry drain in order; ACK precedes reports; report error does not mark original unsaved; BUSY retries; offline draft and online recovery; conflict stops without overwrite. Google RPC mocked."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-storage.cjs",
+      "passed": true,
+      "output": "PASS: storage failure/commit/revision tests; monthly 2 of 4 = 50% in reporting sheet; 17-column site stock reporting; annex zero shortage despite total 8, transfer suggestion, site opt-out and limits. Google services mocked."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-unassigned.cjs",
+      "passed": true,
+      "output": "PASS unassigned fixed substitutes: selectable for both sites, inactive/other-site/self/empty rejected, affiliation unchanged, one-day and recurring/new-month persistence, primary and automatic pools unchanged, originals and other site preserved."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-undo-popups-browser.cjs",
+      "passed": true,
+      "output": "PASS browser: undo button next to send, sequential single-step/double-click guard/no auto JANDI, original preserved; all-dialog outside close, inside click/drag protection, dirty text/photo confirm, nested top-only close, async saving busy guard, duty employee dialog busy guard, 360/390px. Mocked Google RPC."
+    },
+    {
+      "version": "v4.4.18",
+      "test": "verify-undo.cjs",
+      "passed": true,
+      "output": "PASS undo: three changes reversed newest-first without undoing undo records; primary+lunch restored; before-entry metadata restored; original, unknown fields, other site/month preserved; reset undo; legacy history supported; changed baseline blocked; no mutation/no-op protection."
+    },
+    {
+      "version": "v4.4.18",
       "test": "verify-upgrade.cjs",
       "passed": true,
       "output": "PASS core: affiliation migration/filtering/transfer, daily two-person rows, holiday skip, cascade across months with past+other-site preservation, fixed lunch no rotation consumption.\nPASS server: 20th schedules following month, notice after commit, no duplicate event, trigger dedup, notification calendar fixed, atomic holiday failure and conflict guard, unknown data preserved. Google services mocked.\nPASS window backfill: missing previous/next months, existing center untouched, primary rotation aligned to existing center."

@@ -825,6 +825,70 @@
           "originalSha256": "7804980568b1d70a44c44cdfbe02ccabcc8094f5a71e8ab3700ee166bdd3f42c"
         }
       ]
+    },
+    {
+      "id": "v4.4.18",
+      "title": "고장·공사 사진 Drive 저장",
+      "status": "로컬·모의 검증 / 실제 운영 확인 전",
+      "scope": "고장/공사 전중후 사진 Drive 저장·서명 연결·재조회, 기존 사진 보존과 명시적 폴더 설정",
+      "files": [
+        {
+          "file": "INI.gs",
+          "originalSha256": "4fdba7e88c8991a23608ae7088ec6bb55fae81eb8a4b684fb7dcfb84221c191f"
+        },
+        {
+          "file": "INI.CS",
+          "originalSha256": "4fdba7e88c8991a23608ae7088ec6bb55fae81eb8a4b684fb7dcfb84221c191f"
+        },
+        {
+          "file": "ConnectionSettings.gs",
+          "originalSha256": "9f12c11485abe7683be797dbdb36348b8f53eae80b7420981509890aaa05170d"
+        },
+        {
+          "file": "RepairPhotoStorage.gs",
+          "originalSha256": "cf3da30ce5c10c28d18862324400cfa6a3b78807724cbb13fc18283b914f7de9"
+        },
+        {
+          "file": "repairs-drive-ui.js",
+          "originalSha256": "020778fc750557874fe3dddaa2ed0e79cb5b00b0b9dc1b41804e586311315a40"
+        },
+        {
+          "file": "repairs-ui.js",
+          "originalSha256": "8896d3b5df0692062d5f10d3f3d0a453761ed68a93755898bf311c526e1803ed"
+        },
+        {
+          "file": "RepairsManagementUI.html",
+          "originalSha256": "4c82b56597feb1f983f72c5483efce2518b2abd590bf66264007df9522d52884"
+        },
+        {
+          "file": "build-repairs.cjs",
+          "originalSha256": "a1dee38fbbd95b87e0fc895e69101f71dd05bee1133ba8bf431099a021c1c64c"
+        },
+        {
+          "file": "popup-behavior.js",
+          "originalSha256": "706e77f9b97a99124ec9a8158378dfd3074326a069cb4a5f32a5a82eacd6a9c5"
+        },
+        {
+          "file": "PopupBehaviorUI.html",
+          "originalSha256": "18874be64b97aeea9d89ffec001710a1f3e604231264353c016ad70cfd1a3af2"
+        },
+        {
+          "file": "verify-repairs-browser.cjs",
+          "originalSha256": "43ecacaa5b866c10c004d7f557a69d1b2375f9897bccf9329c2d08f2929f70ee"
+        },
+        {
+          "file": "verify-repair-drive.cjs",
+          "originalSha256": "d73409cabf976d42d273fcd46a7890bb163b55e829710abeb1f8672d48e266a3"
+        },
+        {
+          "file": "verify-connection-sheet.cjs",
+          "originalSha256": "83ba33810c1770e7eee7b3399d3870a626451bcd21e7b3ff88831aedfa767473"
+        },
+        {
+          "file": "고장공사사진_Drive_설치안내.md",
+          "originalSha256": "d6cfedb8e2afe3424be07910f58ab7291a018af916c163922c95efd7ac275c68"
+        }
+      ]
     }
   ]
 }

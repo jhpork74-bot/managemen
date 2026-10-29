@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-29",
+  "passed": true,
+  "scope": "Local mocked Drive/Sheets/storage and Edge browser tests. No production Drive write, deployment, real mobile camera or JANDI receipt.",
+  "checks": [
+    "private repair JPEG upload-before-record ACK",
+    "fault and before/during/after slots with embedded legacy preservation",
+    "idempotent upload, lost-result deterministic-file recovery, revision and pending guards",
+    "signed canonical photo reads; arbitrary-file reference rejected",
+    "no external Drive I/O under original-data lock",
+    "upload failure retains form; new record retry uses same ID",
+    "reopen retrieves photos by RPC; lazy load does not mark draft dirty",
+    "seven-row settings upgrade preserves six original rows",
+    "manual JANDI and undo/popup/storage regressions"
+  ]
+}
