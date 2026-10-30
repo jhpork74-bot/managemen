@@ -1,0 +1,13 @@
+#csfs .csfs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;align-items:start}
+#csfs .csfs-card{display:flex;flex-direction:column;gap:12px;min-width:0;border:1px solid #d8e6de;border-radius:14px;padding:16px;background:white;box-shadow:0 3px 11px #1d5a4712}
+#csfs .csfs-number{align-self:flex-start;border-radius:20px;background:#eef4f1;color:#315e56;font-size:14px;font-weight:700;padding:5px 10px}
+#csfs .csfs-card h3{margin:0;font-size:19px;line-height:1.4;overflow-wrap:anywhere}
+#csfs .csfs-card p{margin:0;font-size:15px;line-height:1.6;overflow-wrap:anywhere}
+#csfs .csfs-card .flex{margin-top:auto}#csfs button,#csfsDialog button{min-height:44px}
+#csfs .csfs-card img{width:100%;max-height:190px;object-fit:contain;border-radius:9px}#csfs .csfs-photo-open{padding:0;border:0;background:transparent}
+#csfsStatus{font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+#csfsDialog{width:min(820px,94vw);max-height:92dvh;overflow:auto}#csfsDialog fieldset{margin:0 0 14px;padding:14px;border:1px solid #cbdcd3;border-radius:12px;min-width:0}#csfsDialog legend{font-weight:700;padding:0 5px}
+#csfsDialog .csfs-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}#csfsDialog label{min-width:0}#csfsDialog input:not([type=file]){display:block;width:100%;min-width:0;margin-top:5px;font-size:16px}#csfsDialog .csfs-full{grid-column:1/-1}
+#csfsDialog img{display:block;max-width:100%;max-height:180px;object-fit:contain;margin-top:10px;border-radius:8px}#csfsDialog .csfs-form-actions{display:flex;gap:20px;justify-content:flex-end;margin-top:14px}
+#csfsPhotoViewer{width:min(960px,94vw)}#csfsPhotoViewer img{display:block;max-width:100%;max-height:75dvh;object-fit:contain;margin:auto}
+@media(max-width:700px){#csfs .csfs-grid{grid-template-columns:1fr}#csfsDialog .csfs-fields{grid-template-columns:1fr}#csfsDialog .csfs-full{grid-column:auto}}

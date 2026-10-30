@@ -23,6 +23,7 @@
 | [v4.4.18](versions/v4.4.18) | 고장·공사 사진 Drive 저장 | 로컬·모의 검증 / 실제 운영 확인 전 |
 | [v4.4.19](versions/v4.4.19) | 개인·회사 관리자 함께 등록 | 로컬·모의 검증 / 실제 두 계정 운영 확인 전 |
 | [v4.4.22](versions/v4.4.22) | CSFS 월별 게시판·회사 사진·상단 버튼 | 로컬·모의 검증 / 운영 설치 점검 중 |
+| [v4.4.23](versions/v4.4.23) | 저장 충돌 복구 개선 | 사용자 선택 보관 / 로컬·모의 검증 |
 
 초기 보관 번호는 2026-10-27에 정리했으며 이후 개발 버전을 추가합니다. 이전 배포 날짜·번호를 임의로 복원하지 않았습니다. 사용자께서 확인한 월 당직표 기능은 v4.4.3에 해당하는 구성입니다. 사용자 확인 상태는 위 표와 VERSIONS.json에 기록합니다.
 
@@ -47,3 +48,5 @@ Node.js가 있으면 저장소 루트에서 node verify-archive.cjs를 실행합
 Note: v4.4.13 remains local-only by user choice and is excluded from this public upload.
 
 Note: v4.4.13 remains local-only by user choice and is excluded from this public upload.
+
+2026-10-31 보관 방침: 앞으로는 사용자가 직접 사용한 뒤 등록을 명시적으로 요청한 버전만 게시합니다. 기능 개발만으로 자동 게시하지 않습니다.

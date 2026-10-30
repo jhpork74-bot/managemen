@@ -1,0 +1,5 @@
+{
+  "date": "2026-10-31",
+  "scope": "Local mocked browser UI previously verified: independent completions, collision panel and selection; no production writes or real-device verification. Inherited browser scripts not rerun for publication.",
+  "productionDeployment": false
+}

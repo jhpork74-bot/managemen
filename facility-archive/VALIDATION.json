@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-29T14:39:37.965Z",
+  "checkedAt": "2026-10-30T23:52:01.490Z",
   "scope": "JavaScript syntax / mocked Node tests / selected local Edge browser tests; no production deployment or actual mobile camera",
   "results": [
     {
@@ -1225,6 +1225,48 @@
       "test": "verify-upgrade.cjs",
       "passed": true,
       "output": "PASS core: affiliation migration/filtering/transfer, daily two-person rows, holiday skip, cascade across months with past+other-site preservation, fixed lunch no rotation consumption.\nPASS server: 20th schedules following month, notice after commit, no duplicate event, trigger dedup, notification calendar fixed, atomic holiday failure and conflict guard, unknown data preserved. Google services mocked.\nPASS window backfill: missing previous/next months, existing center untouched, primary rotation aligned to existing center."
+    },
+    {
+      "version": "v4.4.23",
+      "test": "verify-sync-recovery.cjs",
+      "passed": true,
+      "output": "PASS independent business areas merge and unknown data survives\nPASS same schedule area blocks instead of overwriting\nPASS separate task completions merge; same-task differing edits remain protected\nPASS inventory accounting and duty baseline/overlay remain atomic\nPASS deletions preserved and old drafts without baseline fail closed\nPASS legacy conflicting draft remains blocked across pagehide/reload\nPASS stale completion save automatically rebases disjoint CSFS change and ACKs\nPASS true collision preserves both sides and original draft baseline\nPASS duplicate load requests cannot race\nPASS edits during server reconciliation are not lost\nPASS photo form draft is not rebased underneath remote edits\nPASS background version check is read-only and never replaces inputs\nPASS offline input keeps baseline and saves on reconnect\nPASS next edit uses acknowledged baseline, not previous request baseline\nPASS acknowledged old request refreshes latest canonical data rather than reposting snapshot\nPASS late lost-ACK retry uses committed request history without overwriting later save\nPASS receipt history is bounded, commit remains under property limit, read-only revision works\nPASS all Apps Script files and HTML inline scripts parse"
+    },
+    {
+      "version": "v4.4.23",
+      "test": "verify-storage.cjs",
+      "passed": true,
+      "output": "PASS: storage failure/commit/revision tests; monthly 2 of 4 = 50% in reporting sheet; 17-column site stock reporting; annex zero shortage despite total 8, transfer suggestion, site opt-out and limits. Google services mocked."
+    },
+    {
+      "version": "v4.4.23",
+      "test": "verify-reliable-storage.cjs",
+      "passed": true,
+      "output": "PASS reliable storage: immediate canonical ACK; single batched slot write; lost-ACK idempotency; no-op and conflict checks; failed slot keeps commit; post-commit marker failure stays successful; deferred/coalesced reports and latest revision; shrinking payload; Calendar lease without canonical lock; worker dedup. Google APIs mocked."
+    },
+    {
+      "version": "v4.4.23",
+      "test": "verify-csfs.cjs",
+      "passed": true,
+      "output": "PASS repair Drive: separate/fallback folder, private files, upload-before-JSON, all photo slots, idempotent retry/lost result recovery, revision/pending guard, original preservation, signed canonical read and forged-file rejection, no Drive I/O under canonical lock.\nPASS CSFS model/service: selected-month grouping, append-one/batch/retry/delete, unknown/other-month/original preservation, input validation, signed company Drive photo read and lost-key protection."
+    },
+    {
+      "version": "v4.4.23",
+      "test": "verify-repair-drive.cjs",
+      "passed": true,
+      "output": "PASS repair Drive: separate/fallback folder, private files, upload-before-JSON, all photo slots, idempotent retry/lost result recovery, revision/pending guard, original preservation, signed canonical read and forged-file rejection, no Drive I/O under canonical lock."
+    },
+    {
+      "version": "v4.4.23",
+      "test": "verify-undo.cjs",
+      "passed": true,
+      "output": "PASS undo: three changes reversed newest-first without undoing undo records; primary+lunch restored; before-entry metadata restored; original, unknown fields, other site/month preserved; reset undo; legacy history supported; changed baseline blocked; no mutation/no-op protection."
+    },
+    {
+      "version": "v4.4.23",
+      "test": "verify-changes.cjs",
+      "passed": true,
+      "output": "PASS duty changes: read-only baseline view, full primary/substitute pair snapshots, incoming rule preview, removal of obsolete substitute, immediate override/history, cancellation retains history, no-op and invalid selection protection, original/unknown data preserved."
     }
   ]
 }
