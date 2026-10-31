@@ -1155,6 +1155,12 @@
       "title": "저장 충돌 복구 개선",
       "status": "사용자 선택 보관 / 로컬·모의 검증",
       "scope": "전체 HTML7/GS15 + 선택 진단2개. 원래 기준 보존·변경 비교·독립 완료 체크 합치기·최근 저장 영수증. 운영 무오류 독립검증 미실행"
+    },
+    {
+      "id": "v4.4.31",
+      "title": "재물관리·담당자·폼텍 라벨·화면 실행 수정",
+      "status": "사용자 선택 보관 / 로컬·모의 검증",
+      "scope": "HTML8 GS16, private photo/movement/survey, batch manager, labels, raw UI include. Google deployment and physical printing not independently verified."
     }
   ],
   "futureArchivePolicy": "사용자가 등록을 명시적으로 요청한 버전만 GitHub에 보관"

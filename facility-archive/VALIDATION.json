@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-30T23:52:01.490Z",
+  "checkedAt": "2026-10-31T13:29:11.028Z",
   "scope": "JavaScript syntax / mocked Node tests / selected local Edge browser tests; no production deployment or actual mobile camera",
   "results": [
     {
@@ -1267,6 +1267,42 @@
       "test": "verify-changes.cjs",
       "passed": true,
       "output": "PASS duty changes: read-only baseline view, full primary/substitute pair snapshots, incoming rule preview, removal of obsolete substitute, immediate override/history, cancellation retains history, no-op and invalid selection protection, original/unknown data preserved."
+    },
+    {
+      "version": "v4.4.31",
+      "test": "verify-assets.cjs",
+      "passed": true,
+      "output": "PASS place registration is unique and preserves unknown fields\nPASS asset validation and initial location; edits cannot silently move property\nPASS first location stays fixed and every intermediate move survives; retries/stale/backdated moves protected\nPASS annual survey saves immutable location/quantity snapshot without duplicates\nPASS disposal lifecycle preserves movements and status history\nPASS malformed or newer data fails closed\nPASS repair Drive: separate/fallback folder, private files, upload-before-JSON, all photo slots, idempotent retry/lost result recovery, revision/pending guard, original preservation, signed canonical read and forged-file rejection, no Drive I/O under canonical lock.\nPASS asset private Drive: dedicated folder required, namespace proof, retry reuse, canonical lazy read, forged file blocked and missing key protected.\nPASS shared private photo integration and legacy repair regression\nPASS sheet settings: create/read/current/pending columns; explicit apply; input retention; secret exclusion; formula/key/duplicate/missing/stale/bad folder checks; original-data isolation; admin-only apply; same-name sheet preservation; six-row upgrade and active-upload folder guard. Mocked Google Sheets.\nPASS connection sheet migration adds only asset row and preserves original settings/data\nPASS only lower diary draft excludes repeats/inspections and includes completed plus incomplete daily tasks regardless upper filter\nPASS deferred spreadsheet projections show asset contents, all moves and annual snapshots\nPASS all server/client scripts parse; asset include appears once before shared popup module"
+    },
+    {
+      "version": "v4.4.31",
+      "test": "verify-asset-manager.cjs",
+      "passed": true,
+      "output": "PASS asset manager: targeted atomic batch assignment, preservation, legacy defaults, individual edits, validation, label escaping/defaults/stale guards, report column and syntax."
+    },
+    {
+      "version": "v4.4.31",
+      "test": "verify-asset-labels.cjs",
+      "passed": true,
+      "output": "PASS asset labels: A4 and single-sheet imposition, copies/start blanks/page breaks, geometry/limits validation, escaped institutional sticker fields, real/unknown survey date, optional fields, safe saved profile and stale-item fingerprint, renamed button and print-dialog lifecycle. No real printer or network calls.\nPASS print handler: canonical refresh before output; stale/pending/offline/network failure blocks printing; fast double-click invokes one printer dialog; busy state restored. Printer call mocked."
+    },
+    {
+      "version": "v4.4.31",
+      "test": "verify-product-photos.cjs",
+      "passed": true,
+      "output": "PASS product photos: bounded two-request private photo queue; duplicate coalescing; 40-entry runtime/3-entry test LRU; failure retry; photo caption and register/change buttons; lazy visibility and stale DOM/ref guards; HTML script syntax."
+    },
+    {
+      "version": "v4.4.31",
+      "test": "verify-formtec.cjs",
+      "passed": true,
+      "output": "PASS Formtec: requested institution default, seven officially documented dimensions/counts, preset selection/save, A4 fit, manual dimensions revert to custom, independent offsets/bounds, existing institution preserved and built UI syntax. Actual cutting alignment/printer not tested."
+    },
+    {
+      "version": "v4.4.31",
+      "test": "verify-asset-menu.cjs",
+      "passed": true,
+      "output": "PASS asset menu: one static menu/section, module executes before diagnostic, missing-module message, boot failure displayed safely, no server logical assignment."
     }
   ]
 }

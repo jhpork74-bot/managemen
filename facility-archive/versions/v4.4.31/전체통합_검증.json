@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-31",
+  "passed": true,
+  "tests": [
+    "one static menu and reusable section",
+    "post-module diagnostic order",
+    "missing module guidance",
+    "safe bootstrap error display",
+    "server logical assignment absent"
+  ],
+  "browserVerified": [
+    "CSFS followed by asset menu",
+    "menu opens full panel",
+    "batch manager and label buttons visible"
+  ],
+  "actualOperationalCause": "Not established; current deployed source not directly inspected.",
+  "operationalDeployment": false,
+  "physicalPrinterTested": false
+}

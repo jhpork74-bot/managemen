@@ -50,3 +50,5 @@ Note: v4.4.13 remains local-only by user choice and is excluded from this public
 Note: v4.4.13 remains local-only by user choice and is excluded from this public upload.
 
 2026-10-31 보관 방침: 앞으로는 사용자가 직접 사용한 뒤 등록을 명시적으로 요청한 버전만 게시합니다. 기능 개발만으로 자동 게시하지 않습니다.
+
+| [v4.4.31](versions/v4.4.31) | 재물관리·담당자·폼텍 라벨·화면 실행 수정 | 사용자 선택 보관 / 로컬·모의 검증 |

@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-31",
+  "passed": true,
+  "productionReadOnlyObservation": [
+    "v4.4.30 footer confirmed",
+    "asset placeholder reported not executed",
+    "browser SyntaxError: missing ) after argument list",
+    "delivered source is truncated at gallery image wildcard and missing subsequent dialogs"
+  ],
+  "tests": [
+    "all five dialog forms retained",
+    "no contiguous wildcard MIME in script",
+    "ordinary and block-comment-removed output both parse",
+    "v30 reproduces parse failure under comment removal",
+    "raw fixed-file include preserves exact bytes in mocked HtmlService"
+  ],
+  "limitation": "Exact internal Google transformation is inferred from source comparison; fixed version not deployed to Google yet.",
+  "productionWrites": false,
+  "operationalDeployment": false
+}

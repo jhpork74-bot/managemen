@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-31",
+  "passed": true,
+  "tests": [
+    "batch two targets only",
+    "input immutable",
+    "unknown fields/photos/history/profile preserved",
+    "invalid targets/duplicates/blank/length rejected atomically",
+    "legacy items default blank",
+    "individual manager edit",
+    "label escaping/default enabled/missing value",
+    "stale manager prevents print",
+    "report column appended",
+    "built source syntax"
+  ],
+  "browserVerified": [
+    "select all opens batch popup",
+    "save ACK retains selection",
+    "Formtec 3108 preview shows saved manager"
+  ],
+  "physicalPrinting": false,
+  "operationalDeployment": false
+}

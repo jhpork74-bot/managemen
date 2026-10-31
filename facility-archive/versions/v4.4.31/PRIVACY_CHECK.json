@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-31",
+  "sanitized": true,
+  "operationalIdsRemoved": true,
+  "institutionAnonymized": true,
+  "staffNamesRemoved": true,
+  "credentialsIncluded": false,
+  "operationalPhotosOrJsonIncluded": false,
+  "productionExtractedScriptIncluded": false,
+  "previousVersionFoldersModified": false
+}
