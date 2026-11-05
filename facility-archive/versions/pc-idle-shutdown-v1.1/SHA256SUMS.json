@@ -1,0 +1,12 @@
+{
+  "build.ps1": "60b0123f6f692ec03b1a0fa128c49383b0305f818c38f5905c1ec2181f251302",
+  "CHANGELOG.md": "9fbabc5ce908597f282c54453196e18bf2d3a4288601139b0a1a9cd6bc8d3e66",
+  "IdlePolicy.cs": "fd82bad169e44e974691c3a7799b7a5ccea2e207013b23a735aaa0582ece3915",
+  "IdleShutdown.cs": "b7bd0fd8a95508915bd977d4ec61867bb325aed7ccecd37aafc6c41e2e1aa480",
+  "PC미사용자동종료.exe": "2bd5eff67712a6ef12495548c7bed55b418877ca2ddbb1a355bc2efba39cf7e2",
+  "PolicyTests.cs": "744e8e8ad96ebc440ec9166f3a8704d4fbd108001c46cc635ca2d54e2c4d74dd",
+  "README.md": "e1f6f6ca026de12327b00e2df43a7c25d60805035f033934da23a624328ccc1f",
+  "VALIDATION.json": "52ca0b43ff5145f81c2f2022d9b19baffcd61eeac4e03074f5adf241dc9d441b",
+  "시작프로그램등록.vbs": "c2aac796b25d0d83d82585b6b80a3b3c1d74257de9d74270c3fbe45976361633",
+  "시작프로그램등록해제.vbs": "9faf5071b9fc54bda2eaeae5f2a45894fb4a31dc7100c91f890432afce17e159"
+}

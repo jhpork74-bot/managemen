@@ -1161,7 +1161,18 @@
       "title": "재물관리·담당자·폼텍 라벨·화면 실행 수정",
       "status": "사용자 선택 보관 / 로컬·모의 검증",
       "scope": "HTML8 GS16, private photo/movement/survey, batch manager, labels, raw UI include. Google deployment and physical printing not independently verified."
+    },
+    {
+      "id": "pc-idle-shutdown-v1.1",
+      "title": "Windows 1시간 미사용 자동종료 · Ctrl+F1 종료 표시",
+      "status": "사용자 작동 확인 + 시간정책 로컬 검사",
+      "scope": "별도 Windows 프로그램. 실행파일/소스/설치 안내. 웹앱 버전 번호와 별개.",
+      "userConfirmation": {
+        "date": "2026-11-05",
+        "scope": "사용자가 동작에 만족한다고 확인하고 GitHub 보관을 명시적으로 요청"
+      }
     }
   ],
   "futureArchivePolicy": "사용자가 등록을 명시적으로 요청한 버전만 GitHub에 보관"
 }
+

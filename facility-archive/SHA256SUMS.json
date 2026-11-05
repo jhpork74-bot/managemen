@@ -1,6 +1,6 @@
 {
   ".gitignore": "b5b3d35abe021433e59b473385189f983c8002a371b5ff542e978831ceac80b6",
-  "README.md": "63bd20f9bf6ec82e5d0925054199429dce3d5a026b958553085692594dd2ddbf",
+  "README.md": "54df1c317dd1c297b274efa565ffd04dc52e59c3f1f51150ccf5d2157052e2c8",
   "VALIDATION.json": "7f48ab74990ea9874eda52d722c05b00f846914f73d2d8ef5e4f6fdc1a0d4777",
   "verify-archive.cjs": "03a35abcf9c83fcb26d36a341665530ab449df5cf8fef1bbbf45c9e224787a6f",
   "versions/v4.4.1/CalendarReminders.gs": "946bde8c21ec94071770c538f94bdff3bdcf15b21d30280a694eb57983d78b77",
@@ -50,7 +50,7 @@
   "versions/v4.4.5/verify-person-rules.cjs": "efcfa3c733781b4c679b949b14ab83e66ed1654e7e2c81c686c284e5835dec45",
   "versions/v4.4.5/verify-storage.cjs": "6c121439fc95fc20887698f062684f28b3898b36955e08c64d89cf295432e1ae",
   "versions/v4.4.5/verify-upgrade.cjs": "685e0438ff0ea5efd836596067c5a50365f6f2f6d57c21525b556e4dbe82506b",
-  "VERSIONS.json": "456619ad6273a932aa331b64e4c508f31481648ee496d94f1fff89d75efc3a11",
+  "VERSIONS.json": "11335b3ec1c4669678914d2d66fc42adaacf9185e8431364147898db899ae27e",
   "versions/v4.4.6/CalendarReminders.gs": "946bde8c21ec94071770c538f94bdff3bdcf15b21d30280a694eb57983d78b77",
   "versions/v4.4.6/Code.gs": "d618f47851a338c86311e9b6dac91a354389bb2cc874e6771a67fde1caff2d89",
   "versions/v4.4.6/duty-core.js": "47b05e0b7d2a437fe5dad5a24d433c30256bb8a412505f082d23da9aed96c8b7",
@@ -944,5 +944,17 @@
   "versions/v4.4.31/전체통합_설치안내.md": "d70aca9acacdfcc726b87c2fbc1c1e80d7d7652245fc2483bd8110670bc2535a",
   "versions/v4.4.31/제품사진_검증.json": "03784e3ff8d72e845b52feb405d6961be519c00f5d64ee67a526940eebb7056e",
   "versions/v4.4.31/폼텍선택_검증.json": "aa5956649c26efcccfa35c0a788c702b751b63b9f87f9ff77f0674d9d029c12b",
-  "versions/v4.4.31/폼텍선택_설치안내.md": "76abc5f4de207a43a4bd675754f6a9f75b5df192a0f25b726fd71a9ca305d07a"
+  "versions/v4.4.31/폼텍선택_설치안내.md": "76abc5f4de207a43a4bd675754f6a9f75b5df192a0f25b726fd71a9ca305d07a",
+  "versions/pc-idle-shutdown-v1.1/build.ps1": "60b0123f6f692ec03b1a0fa128c49383b0305f818c38f5905c1ec2181f251302",
+  "versions/pc-idle-shutdown-v1.1/CHANGELOG.md": "9fbabc5ce908597f282c54453196e18bf2d3a4288601139b0a1a9cd6bc8d3e66",
+  "versions/pc-idle-shutdown-v1.1/IdlePolicy.cs": "fd82bad169e44e974691c3a7799b7a5ccea2e207013b23a735aaa0582ece3915",
+  "versions/pc-idle-shutdown-v1.1/IdleShutdown.cs": "b7bd0fd8a95508915bd977d4ec61867bb325aed7ccecd37aafc6c41e2e1aa480",
+  "versions/pc-idle-shutdown-v1.1/PC미사용자동종료.exe": "2bd5eff67712a6ef12495548c7bed55b418877ca2ddbb1a355bc2efba39cf7e2",
+  "versions/pc-idle-shutdown-v1.1/PC자동종료_v1.1.zip": "2115400b058865076533fe5fcef0d832746bfc89ca8ac4a2cc9279e058f40968",
+  "versions/pc-idle-shutdown-v1.1/PolicyTests.cs": "744e8e8ad96ebc440ec9166f3a8704d4fbd108001c46cc635ca2d54e2c4d74dd",
+  "versions/pc-idle-shutdown-v1.1/README.md": "e1f6f6ca026de12327b00e2df43a7c25d60805035f033934da23a624328ccc1f",
+  "versions/pc-idle-shutdown-v1.1/SHA256SUMS.json": "18d7e99ab2f92b2ea40309995e518c06b84b5bae62fa66dcb16fe22c0ceb1954",
+  "versions/pc-idle-shutdown-v1.1/VALIDATION.json": "52ca0b43ff5145f81c2f2022d9b19baffcd61eeac4e03074f5adf241dc9d441b",
+  "versions/pc-idle-shutdown-v1.1/시작프로그램등록.vbs": "c2aac796b25d0d83d82585b6b80a3b3c1d74257de9d74270c3fbe45976361633",
+  "versions/pc-idle-shutdown-v1.1/시작프로그램등록해제.vbs": "9faf5071b9fc54bda2eaeae5f2a45894fb4a31dc7100c91f890432afce17e159"
 }

@@ -1,0 +1,12 @@
+{
+  "version": "pc-idle-shutdown-v1.1",
+  "date": "2026-11-05",
+  "compiled": true,
+  "timePolicyChecksPassed": 9,
+  "uiHotkeyIndependentlyTested": false,
+  "actualShutdownIndependentlyTested": false,
+  "userConfirmedOperation": true,
+  "userConfirmedDate": "2026-11-05",
+  "explicitArchiveRequest": true,
+  "containsOperationalData": false
+}
