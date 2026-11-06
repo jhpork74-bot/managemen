@@ -1,0 +1,210 @@
+<style>.facility-voice-field{display:grid;grid-template-columns:minmax(0,9fr) minmax(44px,1fr);gap:6px;width:100%;min-width:0;align-items:start}.facility-voice-field>input,.facility-voice-field>textarea{width:100%!important;min-width:0;box-sizing:border-box}.facility-voice-button{min-width:44px;min-height:44px;padding:6px!important;font-size:20px!important;cursor:pointer}.facility-voice-button[aria-pressed=true]{background:#b91c1c!important;color:white!important}.facility-voice-status{grid-column:1/-1;font-size:13px;line-height:1.5;white-space:normal}.facility-voice-status:empty{display:none}
+.facility-search{padding:12px 6px;border-bottom:1px solid #69727d;margin-bottom:10px;color:inherit;width:100%;box-sizing:border-box}.facility-search label{display:block;font-weight:bold;margin-bottom:8px}.facility-search-line{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:4px}.facility-search input{min-width:0;width:100%;box-sizing:border-box;font-size:16px;padding:8px;color:#15283a;background:white}.facility-search button{min-height:44px}.facility-search small{display:block;line-height:1.5;white-space:normal}.facility-search-result{display:block;width:100%;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0;padding:14px;font-size:16px;line-height:1.5}
+</style><script>
+(()=>{
+ 'use strict';if(window.FacilityPopupBehavior)return;const baseline=new WeakMap(),stack=[];let press=null;
+ function fingerprint(dialog){return JSON.stringify({fields:Array.from(dialog.querySelectorAll('form input,form select,form textarea')).map(el=>({tag:el.tagName,type:el.type,name:el.name,id:el.id,value:el.type==='file'?Array.from(el.files||[]).map(f=>[f.name,f.size,f.lastModified]):el.value,checked:el.checked,selected:el.multiple?Array.from(el.selectedOptions).map(x=>x.value):null})),images:dialog.id==='repairDialog'&&typeof window.RepairPhotoDraftSignature==='function'?[window.RepairPhotoDraftSignature()]:dialog.id==='assetDialog'&&window.AssetView?[window.AssetView.draftSignature()]:dialog.id==='csfsDialog'&&window.CSFSView?[window.CSFSView.draftSignature()]:Array.from(dialog.querySelectorAll('form img')).map(x=>x.getAttribute('src')||''),pressed:Array.from(dialog.querySelectorAll('form [aria-pressed]')).map(x=>[x.id,x.getAttribute('aria-pressed')])})}
+ function opened(dialog){const i=stack.indexOf(dialog);if(i>=0)stack.splice(i,1);stack.push(dialog);queueMicrotask(()=>{if(dialog.open)baseline.set(dialog,fingerprint(dialog))})}
+ for(const method of ['showModal','show']){const original=HTMLDialogElement.prototype[method];HTMLDialogElement.prototype[method]=function(...args){const result=original.apply(this,args);opened(this);return result}}
+ document.querySelectorAll('dialog[open]').forEach(opened);
+ function top(){return stack.filter(x=>x.isConnected&&x.open).slice(-1)[0]||Array.from(document.querySelectorAll('dialog[open]')).slice(-1)[0]}
+ function outside(dialog,event){const r=dialog.getBoundingClientRect();return event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom}
+ function busy(dialog){
+  if(typeof cloudSaving!=='undefined'&&cloudSaving)return true;
+  if(dialog.id==='dcDialog'&&window.DutyChangesView&&window.DutyChangesView.getContext().busy)return true;
+  if(dialog.id==='repairDialog'&&((typeof repairSaving!=='undefined'&&repairSaving)||(typeof repairProcessing!=='undefined'&&repairProcessing)))return true;
+  if(/^duty/.test(dialog.id)&&typeof window.DutyManagementIsBusy==='function'&&window.DutyManagementIsBusy())return true;
+  return dialog.getAttribute('aria-busy')==='true';
+ }
+ const downEvent='PointerEvent' in window?'pointerdown':'mousedown';
+ document.addEventListener(downEvent,event=>{if(event.button!==0||event.isPrimary===false){press=null;return}const dialog=top();press=dialog?{dialog,outside:outside(dialog,event)}:null},true);
+ document.addEventListener('click',event=>{
+  const down=press;press=null;const dialog=top();if(!dialog||!down||down.dialog!==dialog||!down.outside||!outside(dialog,event))return;
+  event.preventDefault();event.stopImmediatePropagation();if(busy(dialog))return;
+  const cancel=new Event('cancel',{cancelable:true});if(!dialog.dispatchEvent(cancel))return;
+  if(baseline.has(dialog)&&baseline.get(dialog)!==fingerprint(dialog)&&!confirm('아직 저장하지 않은 입력·사진 변경사항이 있습니다. 저장하지 않고 닫을까요?'))return;
+  dialog.close('cancel');
+ },true);
+ document.addEventListener('close',event=>{if(event.target instanceof HTMLDialogElement){if(event.target.open)return;baseline.delete(event.target);const i=stack.indexOf(event.target);if(i>=0)stack.splice(i,1)}},true);
+ window.FacilityPopupBehavior={isDirty:dialog=>baseline.has(dialog)&&baseline.get(dialog)!==fingerprint(dialog)};
+})();
+
+</script><script>
+(function(){
+ 'use strict';
+ if(window.FacilityVoiceInput)return;
+ window.FacilityVoiceInput=true;
+ var active=null;
+ document.addEventListener('facility-clear-input',function(e){if(active&&active.input===e.detail.input)stop();});
+ function stop(){if(active){var a=active;active=null;try{a.rec.abort();}catch(e){}a.button.setAttribute('aria-pressed','false');}}
+ function attach(input){
+  if(input.closest('.facility-voice-field')||input.readOnly||/email|url|password|token|webhook|folder|spreadsheet|connection/i.test(input.id+' '+input.name))return;
+  var wrap=document.createElement('span');wrap.className='facility-voice-field';
+  input.parentNode.insertBefore(wrap,input);wrap.appendChild(input);
+  var button=document.createElement('button');button.type='button';button.className='facility-voice-button';button.hidden=true;button.textContent='';button.title='한국어 음성 입력';button.setAttribute('aria-label','한국어 음성 입력');button.setAttribute('aria-pressed','false');wrap.appendChild(button);
+  var status=document.createElement('span');status.className='facility-voice-status';status.setAttribute('role','status');wrap.appendChild(status);
+  button.addEventListener('click',function(){
+   if(input.disabled||input.readOnly||input.closest('[aria-busy="true"]'))return;
+   if(active&&active.button===button){stop();status.textContent='음성 입력을 중지했습니다.';return;}
+   stop();
+   if(/Android/i.test(navigator.userAgent)){input.focus();status.textContent='음성 입력을 시작합니다. 시설관리 음성키보드가 선택되어 있어야 합니다.';window.location.href='intent://input?auto=1#Intent;scheme=facilityvoice;package=kr.facility.assistant;end';return;}
+   var Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+   if(!Recognition){status.textContent='이 환경에서는 키보드의 마이크 또는 Windows + H로 입력해 주세요.';return;}
+   var rec=new Recognition(),dialog=input.closest('dialog'),base=input.value,start=input.selectionStart==null?base.length:input.selectionStart,end=input.selectionEnd==null?start:input.selectionEnd,spoken='';
+   rec.lang='ko-KR';rec.interimResults=false;rec.continuous=false;
+   var session={rec:rec,button:button,input:input};active=session;button.setAttribute('aria-pressed','true');status.textContent='말씀해 주세요. 완료 후 저장 버튼을 눌러 주세요.';
+   rec.onresult=function(event){
+    if(active!==session||!input.isConnected||input.disabled||input.readOnly||(dialog&&!dialog.open)||input.closest('[aria-busy="true"]'))return;
+    if(input.value!==base){status.textContent='직접 입력한 내용을 보호하기 위해 음성 입력을 중지했습니다.';stop();return;}
+    for(var i=event.resultIndex;i<event.results.length;i++)if(event.results[i].isFinal)spoken+=event.results[i][0].transcript;
+    input.value=base.slice(0,start)+spoken+base.slice(end);base=input.value;start+=spoken.length;end=start;spoken='';input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));status.textContent='음성이 입력되었습니다. 내용을 확인하고 저장해 주세요.';
+   };
+   rec.onerror=function(e){if(active!==session)return;status.textContent=(e.error==='not-allowed'||e.error==='service-not-allowed'?'마이크 권한 또는 웹앱 실행 환경에서 음성 입력이 차단되었습니다. ':'음성을 인식하지 못했습니다. ')+'키보드 마이크 또는 Windows + H를 이용해 주세요.';};
+   rec.onend=function(){if(active===session){active=null;button.setAttribute('aria-pressed','false');}};
+   try{rec.start();}catch(e){stop();status.textContent='음성 입력을 시작하지 못했습니다. 키보드 마이크를 이용해 주세요.';}
+  });
+ }
+ function scan(){
+  document.querySelectorAll('input:not([type]),input[type="text"],input[type="search"],textarea').forEach(attach);
+  document.querySelectorAll('.facility-voice-field').forEach(function(w){var i=w.querySelector('input,textarea'),b=w.querySelector('button');if(i&&b){var disabled=i.disabled||i.readOnly||!!i.closest('[aria-busy="true"]');if(b.disabled!==disabled)b.disabled=disabled;}});
+  if(active&&(!active.input.isConnected||active.input.disabled||active.input.closest('[aria-busy="true"]')||(active.input.closest('dialog')&&!active.input.closest('dialog').open)))stop();
+ }
+ document.addEventListener('close',stop,true);document.addEventListener('cancel',stop,true);document.addEventListener('visibilitychange',function(){if(document.hidden)stop();});
+ var pending=false;new MutationObserver(function(){if(!pending){pending=true;queueMicrotask(function(){pending=false;scan();});}}).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['open','disabled','readonly','aria-busy']});scan();
+})();
+
+(function(){
+ 'use strict';if(window.FacilitySearch)return;
+ var groups={tasks:'tasks',items:'checklist',checks:'checklist',weeklyChecks:'checklist',monthlyChecks:'checklist',repairs:'repairs',stock:'stock',orders:'orders',movements:'orders',csfs:'csfs',assets:'assetManagement',assetManagement:'assetManagement',fireExtinguishers:'fireExtinguishers',duty:'dutyManagement',dutyRoster:'dutyManagement',dutyManagement:'dutyManagement',dutyChanges:'dutyChanges'};
+ var ignore=/^(id|.*Id|.*Ids|photo|photos|workPhotos|signature|proof|token|.*url|.*key|baseline.*|beforeChange)$/i;
+ function records(value,path,out,depth){
+  if(!value||typeof value!=='object'||depth>12)return;
+  var parts=[];Object.keys(value).forEach(function(k){if(ignore.test(k))return;var v=value[k];if(typeof v==='string'&&v.length<1500&&!/^(data:|drive-photo:|https?:)/i.test(v))parts.push(v);});
+  if(parts.length)out.push({text:parts.join(' · '),path:path.join(' / ')});
+  Object.keys(value).forEach(function(k){if(!ignore.test(k)&&typeof value[k]==='object')records(value[k],path.concat(/^\d{4}-\d{2}/.test(k)?k:[]),out,depth+1);});
+ }
+ function find(source,query,menus){var q=query.trim().toLocaleLowerCase(),out=[];if(!q)return out;
+  menus.forEach(function(m){if(m.label.toLocaleLowerCase().includes(q))out.push({tab:m.tab,text:m.label,path:'메뉴'});});
+  Object.keys(groups).forEach(function(key){var target=groups[key],menu=menus.find(function(m){return m.tab===target;});if(!menu)return;var rows=[];records(source[key],[],rows,0);rows.forEach(function(r){if((r.text+' '+r.path).toLocaleLowerCase().includes(q))out.push({tab:target,text:r.text,path:r.path,label:menu.label});});});return out;
+ }
+ window.FacilitySearch={find:find};
+ var nav=document.querySelector('main>nav.tabs');if(!nav)return;
+ var box=document.createElement('div');box.className='facility-search';box.innerHTML='<label for="facilityGlobalQuery">전체 검색</label><div class="facility-search-line"><input id="facilityGlobalQuery" type="search" placeholder="내용 또는 메뉴 검색" aria-label="전체 검색"><button type="button" id="facilitySearchMic" hidden aria-label="음성으로 검색"></button></div><button type="button" id="facilitySearchRun">검색</button><small id="facilitySearchStatus" role="status"></small>';
+ nav.prepend(box);var section=document.createElement('section');section.id='facilitySearchResults';section.className='hidden';section.innerHTML='<div class="panel"><h2>검색 결과</h2><p>현재 기기에 불러온 업무 내용에서 찾습니다. 결과를 누르면 관련 화면으로 이동합니다.</p><div id="facilitySearchRows"></div></div>';document.querySelector('main').appendChild(section);
+ var input=box.querySelector('input'),status=box.querySelector('small'),mic=box.querySelector('#facilitySearchMic'),recognition=null;
+ document.addEventListener('facility-clear-input',function(e){if(e.detail.input===input&&recognition){recognition.abort();recognition=null;}});
+ function search(){var query=input.value.trim();if(!query){status.textContent='검색할 내용을 입력해 주세요.';return;}var menus=Array.from(nav.querySelectorAll('[data-tab]')).map(function(b){return {tab:b.dataset.tab,label:b.textContent.trim()};});var results=find(typeof data==='object'?data:{},query,menus),rows=section.querySelector('#facilitySearchRows');rows.replaceChildren();var count=document.createElement('p');count.textContent='“'+query+'” 검색 결과 '+results.length+'건'+(results.length>200?' (앞의 200건 표시)':'');rows.appendChild(count);results.slice(0,200).forEach(function(r){var b=document.createElement('button');b.type='button';b.className='facility-search-result';b.textContent=(r.label||r.text)+(r.path?' · '+r.path:'')+'\n'+r.text;b.addEventListener('click',function(){var target=Array.from(nav.querySelectorAll('[data-tab]')).find(function(n){return n.dataset.tab===r.tab;});if(target)target.click();});rows.appendChild(b);});switchTab('facilitySearchResults');section.scrollIntoView({block:'start',behavior:'smooth'});status.textContent=results.length+'건을 찾았습니다.';}
+ box.querySelector('#facilitySearchRun').onclick=search;input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();search();}});
+ mic.onclick=function(){if(/Android/i.test(navigator.userAgent)){input.focus();status.textContent='음성 입력을 시작합니다. 입력 후 검색을 누르세요.';window.location.href='intent://input?auto=1#Intent;scheme=facilityvoice;package=kr.facility.assistant;end';return;}if(recognition){recognition.abort();return;}var R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){status.textContent='키보드 마이크 또는 Windows + H로 입력해 주세요.';return;}var r=new R();recognition=r;r.lang='ko-KR';r.interimResults=false;r.onresult=function(e){if(recognition!==r)return;input.value=e.results[0][0].transcript;search();};r.onerror=function(){status.textContent='음성 권한/연결을 확인하거나 키보드 마이크를 이용해 주세요.';};r.onend=function(){recognition=null;mic.setAttribute('aria-pressed','false');};try{r.start();mic.setAttribute('aria-pressed','true');status.textContent='검색할 내용을 말씀해 주세요.';}catch(e){recognition=null;status.textContent='음성 입력을 시작할 수 없습니다.';}};
+ document.addEventListener('visibilitychange',function(){if(document.hidden&&recognition)recognition.abort();});
+})();
+
+</script>
+<script>
+(function(){
+ if(window.FacilitySingleClickVoice)return;
+ window.FacilitySingleClickVoice=true;
+ var lastInput=null,lastStart=0;
+ document.addEventListener('click',function(event){
+  var input=event.target;
+  if(!input || !input.matches('textarea,input:not([type]),input[type="text"],input[type="search"]') || input.disabled || input.readOnly || input.closest('[aria-busy="true"]'))return;
+  var wrapper=input.closest('.facility-voice-field');
+  var button=wrapper&&wrapper.querySelector('.facility-voice-button');
+  if(input.id==='facilityGlobalQuery')button=document.getElementById('facilitySearchMic');
+  if(!button||button.disabled)return;
+  if(button.getAttribute('aria-pressed')==='true')return;
+  if(lastInput===input && Date.now()-lastStart<900)return;
+  lastInput=input;lastStart=Date.now();
+  input.focus();
+  button.click();
+ });
+})();
+</script>
+<style id="facilityDoubleClickOnly">
+.facility-voice-button,#facilitySearchMic{display:none!important}
+.facility-voice-field{grid-template-columns:minmax(0,1fr)!important;gap:0!important}
+.facility-search-line{grid-template-columns:minmax(0,1fr)!important}
+</style>
+
+
+<style id="facilityTextClear">
+.facility-clear-field{display:grid;position:relative;min-width:0;width:100%;align-items:start}
+.facility-clear-field>input,.facility-clear-field>textarea{box-sizing:border-box;width:100%!important;min-width:0;padding-right:48px!important}
+.facility-clear-field>.facility-text-clear{position:absolute;right:1px;top:1px;width:42px;min-width:42px;min-height:42px;height:42px;display:flex;align-items:center;justify-content:center;border:0!important;border-radius:8px;background:transparent!important;color:#536a77!important;font-size:26px!important;line-height:1!important;padding:0!important;margin:0!important;cursor:pointer;z-index:1}
+.facility-clear-field>.facility-text-clear:hover{background:#dfe9ed!important;color:#193140!important}
+.facility-clear-field>.facility-text-clear:focus-visible{outline:2px solid #176f67;outline-offset:-3px}
+.facility-clear-field>.facility-text-clear[hidden]{display:none!important}
+.facility-clear-field>input[type=search]::-webkit-search-cancel-button{display:none}
+
+</style>
+<script id="facilityTextClearScript">
+(function () {
+  'use strict';
+  if (window.FacilityTextClear) return;
+  window.FacilityTextClear = true;
+  var fields = new Map();
+  var selector = 'textarea,input:not([type]),input[type="text"],input[type="search"],input[type="email"],input[type="url"],input[type="tel"]';
+
+  function sync() {
+    fields.forEach(function (button, input) {
+      if (!input.isConnected) {
+        fields.delete(input);
+        return;
+      }
+      var unavailable = input.disabled || input.readOnly || !!input.closest('[aria-busy="true"]');
+      button.hidden = !input.value || unavailable;
+      if (button.disabled !== unavailable) button.disabled = unavailable;
+    });
+  }
+
+  function attach(input) {
+    if (fields.has(input)) return;
+    var wrapper = input.parentElement;
+    if (!wrapper.classList.contains('facility-voice-field')) {
+      wrapper = document.createElement('span');
+      input.parentNode.insertBefore(wrapper, input);
+      wrapper.appendChild(input);
+    }
+    wrapper.classList.add('facility-clear-field');
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'facility-text-clear';
+    button.textContent = '×';
+    button.title = '입력 내용 지우기';
+    button.setAttribute('aria-label', '입력 내용 지우기');
+    button.hidden = true;
+    wrapper.appendChild(button);
+    fields.set(input, button);
+    button.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (input.disabled || input.readOnly || input.closest('[aria-busy="true"]')) return;
+      document.dispatchEvent(new CustomEvent('facility-clear-input', { detail: { input: input } }));
+      // End the editor connection so a late native dictation result cannot refill it.
+      input.blur();
+      input.value = '';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      sync();
+    });
+  }
+
+  function scan() {
+    document.querySelectorAll(selector).forEach(attach);
+    sync();
+  }
+  document.addEventListener('input', sync, true);
+  document.addEventListener('change', sync, true);
+  document.addEventListener('reset', function () { setTimeout(sync, 0); }, true);
+  var queued = false;
+  new MutationObserver(function () {
+    if (queued) return;
+    queued = true;
+    queueMicrotask(function () { queued = false; scan(); });
+  }).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['disabled', 'readonly', 'value', 'aria-busy'] });
+  // Existing forms also set .value directly when loading saved records.
+  setInterval(function () { if (!document.hidden) sync(); }, 600);
+  scan();
+})();
+
+</script>

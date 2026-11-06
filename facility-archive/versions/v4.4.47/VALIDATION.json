@@ -1,0 +1,12 @@
+{
+  "version": "v4.4.47",
+  "date": "2026-11-07",
+  "explicitUserArchiveRequest": true,
+  "runtimeFiles": 30,
+  "syntax": true,
+  "userConfirmedVoiceFeature": true,
+  "latestTopButtonsBrowserTested": false,
+  "googleProductionDeploymentPerformed": false,
+  "androidActualTested": false,
+  "sanitized": true
+}

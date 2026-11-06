@@ -1,0 +1,7 @@
+.facility-clear-field{display:grid;position:relative;min-width:0;width:100%;align-items:start}
+.facility-clear-field>input,.facility-clear-field>textarea{box-sizing:border-box;width:100%!important;min-width:0;padding-right:48px!important}
+.facility-clear-field>.facility-text-clear{position:absolute;right:1px;top:1px;width:42px;min-width:42px;min-height:42px;height:42px;display:flex;align-items:center;justify-content:center;border:0!important;border-radius:8px;background:transparent!important;color:#536a77!important;font-size:26px!important;line-height:1!important;padding:0!important;margin:0!important;cursor:pointer;z-index:1}
+.facility-clear-field>.facility-text-clear:hover{background:#dfe9ed!important;color:#193140!important}
+.facility-clear-field>.facility-text-clear:focus-visible{outline:2px solid #176f67;outline-offset:-3px}
+.facility-clear-field>.facility-text-clear[hidden]{display:none!important}
+.facility-clear-field>input[type=search]::-webkit-search-cancel-button{display:none}

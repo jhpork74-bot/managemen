@@ -62,3 +62,6 @@ Note: v4.4.13 remains local-only by user choice and is excluded from this public
 
 이 항목은 Windows 프로그램이며 웹앱 배포와 별개입니다. 실행파일·ZIP·전체 소스와 설치 안내를 함께 보관합니다.
 
+
+
+| [v4.4.47](versions/v4.4.47) | 최신 통합·업무등록 상단 버튼 | 사용자 선택 보관 / 로컬·모의 검증 |
