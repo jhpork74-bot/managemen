@@ -1,0 +1,2 @@
+Built-in image_gen edit; transparent_background=true.
+Remove only the white exterior background of firefighter-119.png and return a genuinely transparent RGBA PNG. Preserve the firefighter and centered 119 helmet badge, colors, proportions and framing. Exterior corners and gaps outside the silhouette must have alpha zero. White within the badge remains opaque. No new background, objects, text or shadow.

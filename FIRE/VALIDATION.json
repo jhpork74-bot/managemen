@@ -1,0 +1,13 @@
+{
+  "version": "FIRE-3D-1.0",
+  "wallHeightMeters": 2.8,
+  "cellMeters": 0.25,
+  "localLogicTests": true,
+  "mockedGoogleTests": true,
+  "webGLBrowserRendered": true,
+  "fireOnlySmokeLogicTest": true,
+  "editedGridGeometryTest": true,
+  "googleDeploymentTested": false,
+  "physicalMobileTested": false,
+  "notes": "WebGL scene uses a simplified firefighter mesh. Procedural material textures and visual smoke; not a physical fire simulation. User-specific browser map settings are not bundled."
+}
