@@ -1,0 +1,188 @@
+<style>
+#facilityComplaints .complaint-tabs,#facilityComplaints .complaint-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#facilityComplaints button{min-height:44px}
+#complaintForm{display:grid;gap:12px;margin:14px 0}
+#complaintForm label{display:grid;gap:5px;font-weight:650}
+#complaintForm input,#complaintForm textarea{width:100%;min-width:0}
+#complaintList{list-style:none;padding:0;margin:0}
+#complaintList li{padding:8px 0;border-bottom:1px solid #d8e6e7}
+#complaintList button{width:100%;text-align:left;overflow-wrap:anywhere}
+#complaintDeck{display:grid;gap:6px;padding:4px 0}
+#complaintDeck article{min-width:0;padding:8px 10px;border:1px solid #a9ccc8;border-inline-start:3px solid #217569;border-radius:8px;background:#eff8f6;color:#173c3b;overflow-wrap:anywhere}
+#complaintDeck article small,#complaintTable .complaint-meta{color:#365764}
+#complaintTable .complaint-meta{margin-inline-start:8px}
+#facilityComplaints details summary{padding:3px 0;cursor:pointer}
+#facilityComplaints details p{margin:4px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+#complaintTable{width:100%;table-layout:fixed;border-collapse:collapse}
+#complaintTable th,#complaintTable td{text-align:left;padding:6px;border-bottom:1px solid #d8e6e7;overflow-wrap:anywhere}
+#complaintPages{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+#complaintPages button{min-width:44px}
+#complaintPages button[aria-current="page"]{background:#176f67;color:white}
+#facilityComplaints [hidden]{display:none!important}
+</style>
+<script>
+(() => {
+ 'use strict';
+ const id = 'facilityComplaints';
+ const root = document.createElement('section');
+ root.id = id;
+ root.className = 'hidden';
+ root.innerHTML = `<div class="panel"><h2>민원종류</h2>
+ <div class="complaint-tabs"><button type="button" data-complaint-mode="board">게시판으로 보기</button>
+ <button type="button" data-complaint-mode="cards">카드로 보기</button>
+ <button type="button" data-complaint-mode="register">민원등록</button></div>
+ <p id="complaintStatus" role="status"></p>
+ <div id="complaintResults"><div id="complaintDeck" aria-label="등록한 민원 카드" hidden></div>
+ <table id="complaintTable" aria-label="민원 게시판"><thead><tr><th scope="col">제목 · 민원종류</th></tr></thead><tbody></tbody></table>
+ <p id="complaintEmpty">등록된 민원이 없습니다.</p></div>
+ <div id="complaintRegister" hidden><form id="complaintForm">
+ <label>제목<input name="title" maxlength="100" required></label>
+ <label>민원종류<input name="category" maxlength="60" required placeholder="예: 냉난방, 소음, 청소"></label>
+ <label>민원 내용<textarea name="content" rows="5" maxlength="3000" required></textarea></label>
+ <div class="complaint-actions"><button type="submit" class="primary">저장</button><button type="reset">새 민원 작성</button></div>
+ </form><h3>등록 목록</h3><ul id="complaintList"></ul></div>
+ <nav id="complaintPages" aria-label="민원 페이지" hidden></nav></div>`;
+ document.querySelector('main').appendChild(root);
+ const navigation = document.createElement('button');
+ navigation.type = 'button';
+ navigation.dataset.tab = id;
+ navigation.textContent = '📋 민원종류';
+ const anchor = document.querySelector('[data-tab="facilityLearning"]');
+ if (anchor) anchor.after(navigation);
+ else document.querySelector('main>nav.tabs').appendChild(navigation);
+ navigation.onclick = () => switchTab(id);
+ const element = name => root.querySelector('#' + name);
+ const form = element('complaintForm'), deck = element('complaintDeck'), list = element('complaintList');
+ const status = element('complaintStatus'), table = element('complaintTable'), pages = element('complaintPages');
+ const fields = ['title','category','content'];
+ const formKey = KEY + '_complaintForm';
+ const modeKey = KEY + '_complaintView';
+ const pageSize = 30;
+ let selected = null, busy = false, shown = '', mode = 'board', view = 'board', page = 1;
+ let pendingForm = null;
+ try { pendingForm = JSON.parse(localStorage.getItem(formKey) || 'null'); } catch (_) {}
+ try { if (localStorage.getItem(modeKey) === 'cards') view = 'cards'; } catch (_) {}
+ const records = () => Object.values(data.complaintBoard || {}).sort((a,b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')) || String(a.id).localeCompare(String(b.id)));
+ const values = () => Object.fromEntries(fields.map(key => [key,form.elements[key].value]));
+ function saveForm() {
+  try { localStorage.setItem(formKey,JSON.stringify({selected,fields:values()})); } catch (_) {}
+ }
+ function clearFormDraft() {
+  try { localStorage.removeItem(formKey); } catch (_) {}
+ }
+ function setMode(value) {
+  mode = value;
+  if (mode !== 'register') {
+   view = mode;
+   try { localStorage.setItem(modeKey, view); } catch (_) {}
+  }
+  element('complaintResults').hidden = mode === 'register';
+  deck.hidden = mode !== 'cards';
+  table.hidden = mode !== 'board';
+  element('complaintRegister').hidden = mode !== 'register';
+  for (const button of root.querySelectorAll('[data-complaint-mode]')) button.setAttribute('aria-pressed', String(button.dataset.complaintMode === mode));
+ }
+ function detailsFor(row, asCard) {
+  const details = document.createElement('details'), summary = document.createElement('summary');
+  const title = document.createElement('strong'), category = document.createElement('small');
+  const content = document.createElement('p');
+  title.textContent = row.title;
+  category.className = 'complaint-meta';
+  category.textContent = row.category;
+  content.textContent = row.content;
+  summary.append(title);
+  if (!asCard) summary.append(category);
+  details.append(summary, content);
+  return {details, category};
+ }
+ function renderBoard() {
+  if (!cloudReady) return;
+  const rows = records(), totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+  page = Math.min(page, totalPages);
+  const key = JSON.stringify([mode,page,rows]);
+  if (shown === key) return;
+  shown = key;
+  list.replaceChildren();
+  deck.replaceChildren();
+  table.tBodies[0].replaceChildren();
+  pages.replaceChildren();
+  pages.hidden = totalPages === 1;
+  for (let number = 1; number <= totalPages; number++) {
+   const button = document.createElement('button');
+   button.type = 'button';
+   button.textContent = number;
+   button.setAttribute('aria-label', number + '페이지');
+   if (page === number) button.setAttribute('aria-current', 'page');
+   button.onclick = () => {
+    page = number;
+    renderBoard();
+    pages.children[number - 1]?.focus({preventScroll:true});
+    element(mode === 'register' ? 'complaintRegister' : 'complaintResults').scrollIntoView({block:'start'});
+   };
+   pages.append(button);
+  }
+  for (const row of rows.slice((page - 1) * pageSize, page * pageSize)) {
+   if (mode === 'cards') {
+    const card = document.createElement('article');
+    const {details, category} = detailsFor(row, true);
+    card.append(category, details);
+    deck.append(card);
+    continue;
+   }
+   if (mode === 'board') {
+    table.tBodies[0].insertRow().insertCell().append(detailsFor(row, false).details);
+    continue;
+   }
+   const entry = document.createElement('li'), edit = document.createElement('button');
+   edit.type = 'button';
+   edit.textContent = row.title + ' · ' + row.category;
+   edit.onclick = () => {
+    if (busy) return;
+    selected = row.id;
+    for (const key of fields) form.elements[key].value = row[key];
+    saveForm();
+    form.elements.title.focus();
+   };
+   entry.append(edit);
+   list.append(entry);
+  }
+  element('complaintEmpty').hidden = rows.length > 0;
+ }
+ const originalRender = render;
+ render = function () { originalRender(); if (tab === id) renderBoard(); };
+ root.querySelector('.complaint-tabs').onclick = event => {
+  if (!event.target.dataset.complaintMode) return;
+  setMode(event.target.dataset.complaintMode);
+  renderBoard();
+ };
+ form.addEventListener('input',saveForm);
+ form.addEventListener('reset',() => { selected = null; clearFormDraft(); });
+ form.onsubmit = async event => {
+  event.preventDefault();
+  if (busy || !cloudReady || cloudBlocked) return;
+  const entry = Object.fromEntries(Object.entries(values()).map(([key,value]) => [key,value.trim()]));
+  if (fields.some(key => !entry[key])) { status.textContent = '제목, 종류, 민원 내용을 입력하세요.'; return; }
+  const entryId = selected || uid();
+  selected = entryId;
+  const board = data.complaintBoard || {};
+  saveForm();
+  data.complaintBoard = {...board,[entryId]:{...entry,id:entryId,updatedAt:new Date().toISOString()}};
+  busy = true;
+  for (const control of form.elements) control.disabled = true;
+  try {
+   await saveAndWait();
+   form.reset();
+   status.textContent = '민원을 저장했습니다.';
+   page = 1;
+   setMode(view);
+   renderBoard();
+  } catch (error) { status.textContent = '민원 입력을 보관했습니다. ' + error.message; }
+  finally { busy = false; for (const control of form.elements) control.disabled = false; }
+ };
+ if (pendingForm?.fields) {
+  selected = typeof pendingForm.selected === 'string' ? pendingForm.selected : null;
+  for (const key of fields) form.elements[key].value = pendingForm.fields[key] || '';
+  setMode('register');
+ } else setMode(view);
+})();
+</script>

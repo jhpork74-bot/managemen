@@ -65,3 +65,4 @@ Note: v4.4.13 remains local-only by user choice and is excluded from this public
 
 
 | [v4.4.47](versions/v4.4.47) | 최신 통합·업무등록 상단 버튼 | 사용자 선택 보관 / 로컬·모의 검증 |
+| [v4.4.57](versions/v4.4.57) | 이관 후 조회일 유지 · 통합본 | 사용자 요청 보관 / 로컬·모의 검증 |

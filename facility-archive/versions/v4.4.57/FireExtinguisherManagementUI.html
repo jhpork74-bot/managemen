@@ -1,0 +1,69 @@
+<style>
+#fireExtinguishers .fire-table{min-width:850px;table-layout:auto}
+#fireExtinguishers .fire-table th,#fireExtinguishers .fire-table td{white-space:nowrap;line-height:1.6;font-size:15px}
+#fireExtinguishers .fire-completed td{background:#f0f2f4;color:#737b83}
+#fireExtinguishers .fire-completed td:not(:first-child){opacity:.65}
+#fireExtinguishers [data-fire-check]{width:24px;height:24px;accent-color:#1766ac}
+#fireSummary{font-size:17px;font-weight:700;color:#245576}
+#fireDialog .fire-actions{display:flex;justify-content:flex-end;gap:24px;margin-top:16px;flex-wrap:wrap}
+#fireFormStatus,#fireStatus{line-height:1.5;color:#245576}
+
+.fire-month-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.fire-month-controls button{min-height:44px;white-space:nowrap}.fire-month-controls strong{font-size:17px;padding:8px}
+
+</style>
+<script>
+var FireExtinguisherCore=(function(){
+ 'use strict';
+ function object(v){return !!v&&typeof v==='object'&&!Array.isArray(v)}
+ function clone(v){return JSON.parse(JSON.stringify(v))}
+ function date(v){if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v))return false;const d=new Date(v+'T12:00:00Z');return !isNaN(d.getTime())&&d.toISOString().slice(0,10)===v}
+ function root(data){const r=data.fireExtinguishers;if(r===undefined)return {version:1,items:[],inspections:{}};if(!object(r)||!Array.isArray(r.items)||!object(r.inspections))throw Error('소화기 자료 형식을 확인하세요. 기존 자료는 보존했습니다.');return r}
+ function record(data,id){return root(data).items.find(x=>x&&x.id===id)}
+ function upsert(data,item){
+  const r=root(data);if(!item||typeof item.id!=='string'||!/^[A-Za-z0-9_.:-]{1,80}$/.test(item.id)||!['one','two'].includes(item.site))throw Error('소화기 번호와 장소를 확인하세요.');
+  if(typeof item.managementNo!=='string'||!item.managementNo.trim()||item.managementNo.length>100||typeof item.location!=='string'||!item.location.trim()||item.location.length>200)throw Error('관리번호와 설치 위치를 입력하세요.');
+  if(!date(item.expiresOn))throw Error('내용연한 만료일을 올바르게 입력하세요.');
+  if(r.items.some(x=>x&&x.id!==item.id&&!x.archived&&x.site===item.site&&x.managementNo===item.managementNo.trim()))throw Error('같은 장소에 같은 관리번호가 있습니다.');
+  const old=record(data,item.id),next={...old,...item,managementNo:item.managementNo.trim(),location:item.location.trim()};
+  return {...data,fireExtinguishers:{...r,items:old?r.items.map(x=>x&&x.id===item.id?next:x):[...r.items,next]}};
+ }
+ function inspection(data,month,id){if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))throw Error('조회 월을 확인하세요.');const rows=root(data).inspections[month];if(rows!==undefined&&!object(rows))throw Error('이 월의 소화기 점검 자료를 확인하세요.');return rows&&rows[id]||null}
+ function setCompleted(data,id,completed,checkedDate,at){
+  if(typeof completed!=='boolean'||!date(checkedDate))throw Error('점검 날짜와 상태를 확인하세요.');const r=root(data),item=record(data,id);if(!item||item.archived)throw Error('점검할 소화기를 찾지 못했습니다.');
+  const month=checkedDate.slice(0,7),previous=inspection(data,month,id)||{};
+  const entry={...previous,completed,checkedDate:completed?checkedDate:'',updatedAt:at,managementNo:item.managementNo,location:item.location,site:item.site};
+  return {...data,fireExtinguishers:{...r,inspections:{...r.inspections,[month]:{...(r.inspections[month]||{}),[id]:entry}}}};
+ }
+ function rows(data,site,month){const r=root(data);return r.items.filter(x=>x&&!x.archived&&x.site===site).map(item=>({item,inspection:inspection(data,month,item.id)}))}
+ function shiftMonth(month,delta){if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)||!Number.isSafeInteger(delta))throw Error('조회 월을 확인하세요.');const value=new Date(month+'-01T12:00:00Z');value.setUTCMonth(value.getUTCMonth()+delta);return value.toISOString().slice(0,7)}
+ return {date,root,record,upsert,inspection,setCompleted,rows,clone,shiftMonth};
+})();
+
+(()=>{
+ 'use strict';const C=FireExtinguisherCore,$f=id=>document.getElementById(id),today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul'}).format(new Date());
+ let site='one',selectedMonth=today().slice(0,7),busy=false,formBefore=null,formId=null,formApplied=null;
+ const nav=document.querySelector('[data-tab="fireExtinguishers"]')||document.createElement('button');if(!nav.dataset.tab){nav.type='button';nav.dataset.tab='fireExtinguishers';nav.textContent='🧯 소화기현황';document.querySelector('[data-tab="stock"]').after(nav)}
+ let section=$f('fireExtinguishers');if(!section){section=document.createElement('section');section.id='fireExtinguishers';section.className='hidden';$f('stock').after(section)}
+ section.innerHTML='<div class="panel"><div class="toolbar"><h2>🧯 소화기현황</h2><div class="flex"><button type="button" data-fire-site="one">본관</button><button type="button" data-fire-site="two">분관</button><button type="button" id="fireAdd" class="primary">+소화기추가</button></div></div><div class="flex"><div class="fire-month-controls" aria-label="소화기 조회 월"><button type="button" id="firePreviousMonth">저번달</button><button type="button" id="fireCurrentMonth">이번달</button><button type="button" id="fireNextMonth">다음달</button><strong id="fireMonthLabel"></strong></div><strong id="fireToday"></strong></div><p>월 1회 점검입니다. 체크하면 실제 점검 날짜를 저장하고 이번 달은 완료로 표시합니다. 다음 달은 새 점검으로 시작하며 이전 기록은 남습니다.</p><p id="fireSummary" role="status"></p><p id="fireStatus" role="status"></p><div class="stock-wrap"><table class="stock-table fire-table"><thead><tr><th>점검</th><th>관리번호 · 설치 위치</th><th>종류 · 용량</th><th>내용연한 만료일</th><th>이번 달 점검</th><th>관리</th></tr></thead><tbody id="fireRows"></tbody></table></div></div>';
+ const dialog=document.createElement('dialog');dialog.id='fireDialog';dialog.innerHTML='<form id="fireForm"><h2 id="fireFormTitle">소화기 추가</h2><div class="formgrid"><label>장소<select id="fireSite"><option value="one">본관</option><option value="two">분관</option></select></label><label>관리번호<input id="fireNo" maxlength="100" required></label><label class="full">설치 위치<input id="fireLocation" maxlength="200" required></label><label>종류<input id="fireType" maxlength="100" placeholder="예: 분말"></label><label>용량<input id="fireCapacity" maxlength="100" placeholder="예: 3.3kg"></label><label class="full">내용연한 만료일<input id="fireExpires" type="date" required></label><label class="full">비고<textarea id="fireNote" maxlength="2000"></textarea></label></div><p id="fireFormStatus" role="status"></p><div class="fire-actions"><button type="button" id="fireCancel">취소</button><button type="submit" class="primary">저장</button></div></form>';document.body.appendChild(dialog);
+ function setBusy(value){busy=value;dialog.setAttribute('aria-busy',String(value));dialog.querySelectorAll('button,input,select,textarea').forEach(el=>el.disabled=value);section.querySelectorAll('button,input').forEach(el=>el.disabled=value);}
+ function renderFire(){
+  const date=today();$f('fireToday').textContent='오늘 '+date;$f('fireMonthLabel').textContent=selectedMonth.slice(0,4)+'년 '+Number(selectedMonth.slice(5))+'월';section.querySelectorAll('[data-fire-site]').forEach(b=>{b.classList.toggle('primary',b.dataset.fireSite===site);b.setAttribute('aria-pressed',String(b.dataset.fireSite===site));});
+  try{
+   const rows=C.rows(data,site,selectedMonth),completed=rows.filter(x=>x.inspection&&x.inspection.completed===true).length;
+   $f('fireSummary').textContent=(site==='one'?'본관':'분관')+' · '+selectedMonth+' · 점검완료 '+completed+' / 전체 '+rows.length;
+   $f('fireRows').innerHTML=rows.length?rows.map(({item,inspection})=>{const done=!!(inspection&&inspection.completed),expired=item.expiresOn<date;return '<tr class="'+(done?'fire-completed':'')+'"><td><input type="checkbox" data-fire-check="'+esc(item.id)+'" aria-label="'+esc(item.managementNo)+' '+esc(item.location)+' 점검완료" '+(done?'checked ':'')+(busy||selectedMonth!==date.slice(0,7)?'disabled':'')+'></td><td><strong>'+esc(item.managementNo)+'</strong><div>'+esc(item.location)+'</div></td><td>'+esc(item.type||'—')+'<div>'+esc(item.capacity||'—')+'</div></td><td class="'+(expired?'stock-low':'')+'">'+esc(item.expiresOn)+(expired?'<div>만료일 경과</div>':'')+'</td><td><strong>'+(done?'점검완료':'미완료')+'</strong>'+(done?'<div>'+esc(inspection.checkedDate)+'</div>':'')+'</td><td><button type="button" data-fire-edit="'+esc(item.id)+'" '+(done||busy?'disabled':'')+'>수정</button></td></tr>';}).join(''):'<tr><td colspan="6">등록된 소화기가 없습니다. +소화기추가를 누르세요.</td></tr>';
+   $f('fireRows').querySelectorAll('[data-fire-check]').forEach(input=>input.onchange=()=>check(input.dataset.fireCheck,input.checked));$f('fireRows').querySelectorAll('[data-fire-edit]').forEach(button=>button.onclick=()=>openForm(button.dataset.fireEdit));
+  }catch(error){$f('fireStatus').textContent=error.message;$f('fireRows').textContent='';}
+ }
+ function openForm(id){if(busy||!cloudReady||cloudBlocked){$f('fireStatus').textContent='클라우드 연결·저장 상태를 확인하세요.';return;}const item=id?C.record(data,id):null;formId=id||uid();formApplied=null;formBefore=item?JSON.stringify(item):null;$f('fireFormTitle').textContent=item?'소화기 수정':'소화기 추가';for(const [field,key] of [['fireNo','managementNo'],['fireLocation','location'],['fireType','type'],['fireCapacity','capacity'],['fireExpires','expiresOn'],['fireNote','note']])$f(field).value=item&&item[key]||'';$f('fireSite').value=item?item.site:site;$f('fireFormStatus').textContent='';dialog.showModal();}
+ async function check(id,completed){if(busy||!cloudReady||cloudBlocked||selectedMonth!==today().slice(0,7)){renderFire();return;}const item=C.record(data,id);if(!item)return;const before=JSON.stringify(C.inspection(data,selectedMonth,id));setBusy(true);try{await cloudFlushPending();if(before!==JSON.stringify(C.inspection(data,selectedMonth,id)))throw Error('다른 기기에서 점검 상태가 변경됐습니다. 다시 확인하세요.');data=C.setCompleted(data,id,completed,today(),new Date().toISOString());await saveAndWait();$f('fireStatus').textContent=completed?'점검완료 저장 · '+today():'미완료로 변경 저장';}catch(error){$f('fireStatus').textContent='저장 미확인 · 입력 보존: '+error.message;}finally{setBusy(false);renderFire();}}
+ $f('fireForm').onsubmit=async event=>{event.preventDefault();if(busy)return;const item={id:formId,site:$f('fireSite').value,managementNo:$f('fireNo').value.trim(),location:$f('fireLocation').value.trim(),type:$f('fireType').value.trim(),capacity:$f('fireCapacity').value.trim(),expiresOn:$f('fireExpires').value,note:$f('fireNote').value.trim(),updatedAt:new Date().toISOString()};try{C.upsert(data,item)}catch(error){$f('fireFormStatus').textContent=error.message;return;}setBusy(true);try{await cloudFlushPending();const current=C.record(data,formId);if((current?JSON.stringify(current):null)!==formBefore&&(current?JSON.stringify(current):null)!==formApplied)throw Error('이 소화기 정보가 다른 기기에서 변경됐습니다. 입력을 보존하고 확인하세요.');data=C.upsert(data,item);formApplied=JSON.stringify(C.record(data,formId));await saveAndWait();site=item.site;dialog.close();renderFire();$f('fireStatus').textContent='소화기 정보 서버 저장 완료';}catch(error){$f('fireFormStatus').textContent='저장 미확인 · 입력 유지: '+error.message;}finally{setBusy(false);}};
+ $f('fireAdd').onclick=()=>openForm();$f('fireCancel').onclick=()=>{if(!busy)dialog.close()};dialog.addEventListener('cancel',event=>{if(busy)event.preventDefault()});
+ section.querySelectorAll('[data-fire-site]').forEach(button=>button.onclick=()=>{if(!busy){site=button.dataset.fireSite;renderFire()}});function changeMonth(value){if(!busy){selectedMonth=value;$f('fireStatus').textContent=value===today().slice(0,7)?'':'지난달·다음달 기록은 조회만 가능합니다.';renderFire()}};$f('firePreviousMonth').onclick=()=>changeMonth(C.shiftMonth(selectedMonth,-1));$f('fireCurrentMonth').onclick=()=>changeMonth(today().slice(0,7));$f('fireNextMonth').onclick=()=>changeMonth(C.shiftMonth(selectedMonth,1));nav.onclick=()=>switchTab('fireExtinguishers');
+ const previousRender=render;render=function(){previousRender();if(tab==='fireExtinguishers')renderFire()};
+ let currentMonth=today().slice(0,7);setInterval(()=>{const month=today().slice(0,7);if(month!==currentMonth){if(selectedMonth===currentMonth)selectedMonth=month;currentMonth=month;}if(tab==='fireExtinguishers'&&!busy&&!dialog.open)renderFire();},60000);
+})();
+
+
+</script>

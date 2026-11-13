@@ -1303,6 +1303,12 @@
       "test": "verify-asset-menu.cjs",
       "passed": true,
       "output": "PASS asset menu: one static menu/section, module executes before diagnostic, missing-module message, boot failure displayed safely, no server logical assignment."
+    },
+    {
+      "version": "v4.4.57",
+      "test": "v4.4.57 archive and carry flow",
+      "passed": true,
+      "output": "전체 공개 Apps Script와 HTML 구문 검사. 로컬 모의 시험에서 두 건 연속 이관, 토요일에서 다음 달 월요일로 이관, 조회 날짜와 월 유지 확인. 운영 미확인."
     }
   ]
 }

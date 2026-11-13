@@ -1,0 +1,118 @@
+<style>
+/* Figma tablet design: native system fonts preserve offline Korean readability. */
+:root[data-facility-layout="sidebar"]{--facility-menu-bg:#172e3e;--facility-accent:#176f67;background:#f3f6f8;color:#193140}
+html[data-facility-layout="sidebar"] body{font-family:'Malgun Gothic','Noto Sans KR',Arial,sans-serif;color:#193140;background:#f3f6f8;line-height:1.6}
+html[data-facility-layout="sidebar"] main{padding:24px}
+html[data-facility-layout="sidebar"] main>nav.tabs{background:var(--facility-menu-bg);gap:6px;padding-left:12px;padding-right:12px}
+html[data-facility-layout="sidebar"] main>nav.tabs::before{content:'시설관리 AI비서';white-space:normal;font-size:20px;padding:22px 8px 18px;line-height:1.5}
+html[data-facility-layout="sidebar"] main>nav.tabs button[data-tab]{min-height:48px;padding:11px 10px;font-size:15px;font-weight:500;border-radius:9px}
+html[data-facility-layout="sidebar"] main>nav.tabs button[data-tab].active{background:#176f67!important;box-shadow:none;font-weight:700}
+html[data-facility-layout="sidebar"] .facility-menu-icon{font-size:16px;flex-basis:20px}
+.facility-search{padding:8px 4px 16px;border-color:#ffffff20}
+.facility-search label{font-size:14px;color:#dce8ef}
+.facility-search input{background:#294455;color:#fff;border-color:#426071;border-radius:9px;min-height:44px}
+.facility-search input::placeholder{color:#dce8ef}
+.facility-search>button{background:#294455;color:white;border-color:#426071;margin-top:8px}
+html[data-facility-layout="sidebar"] body>header{box-shadow:none;background:#f3f6f8;border-bottom:1px solid #e1e8ed}
+html[data-facility-layout="sidebar"] #cloudLoadBar{background:#f3f6f8!important}
+html[data-facility-layout="sidebar"] .panel{background:#fff;border-color:#e5ebef;border-radius:16px;padding:22px;box-shadow:none}
+html[data-facility-layout="sidebar"] .primary,html[data-facility-layout="sidebar"] .tabs button.active{background:#176f67!important;border-color:#176f67!important}
+html[data-facility-layout="sidebar"] button,html[data-facility-layout="sidebar"] .btn{min-height:44px;line-height:1.45}
+html[data-facility-layout="sidebar"] input,html[data-facility-layout="sidebar"] textarea,html[data-facility-layout="sidebar"] select{font-size:16px;line-height:1.55;border-color:#bdccd4;border-radius:9px}
+html[data-facility-layout="sidebar"] .stat{background:#fff;border:1px solid #e5ebef;border-radius:14px;padding:16px}
+html[data-facility-layout="sidebar"] .stat b{color:#176f67;font-size:28px}
+#calendar .toolbar h2{font-size:24px;color:#193140}
+#calendar #calGrid{gap:5px;align-items:stretch}
+#calendar #calGrid .day{min-width:0;border-color:#e2e9ed;background:#f8fafb;border-radius:8px;padding:8px;line-height:1.6}
+#calendar #calGrid .day.today{background:#e5f3ef;border:1px solid #176f67;box-shadow:inset 0 0 0 1px #176f6726}
+#calendar #calGrid .day .num{font-size:17px;font-weight:700;color:#193140}
+#calendar #calGrid .day.today .num{color:#176f67}
+#calendar #calGrid .dow{font-size:15px;line-height:1.5;color:#667c89}
+#calendar #calGrid .chip{font-size:14px;line-height:1.55;padding:5px;background:#e7f1f8}
+#calendar #calGrid .calendar-task-name{font-size:15px;line-height:1.55}
+#calendar #calGrid .calendar-task-row{line-height:1.55;gap:5px}
+#calendar #calGrid .calendar-task-row.is-complete,#calendar #calGrid .calendar-task-row.is-complete .calendar-task-name{color:#73808a!important}
+#calendar #calGrid .calendar-task-items{gap:6px}
+dialog{border:1px solid #dde6eb;border-radius:16px;padding:22px;color:#193140;line-height:1.6}
+dialog label{font-size:14px;line-height:1.6;color:#506674;margin-top:12px}
+dialog input:not([type=checkbox]):not([type=radio]),dialog textarea,dialog select{background:#f4f7f9;min-height:46px}
+dialog button{font-size:16px;min-height:44px}
+.stock-card{border-radius:16px;border-color:#e5ebef;box-shadow:none;padding:22px}
+.stock-card h3{font-size:22px;line-height:1.4}
+.stock-card-total{color:#176f67}
+.stock-location{border-color:#e3ebef;border-radius:10px}
+#facilityLearning .learn-head{background:#172e3e;border-radius:16px}
+#facilityLearning .learn-open h3{font-size:24px;line-height:1.45}
+#facilityLearning .learn-card{border:0;border-radius:16px;min-height:360px}
+#facilityLearning .learn-card.tone-0{background:#e5f3ef}
+#facilityLearning .learn-card.tone-1{background:#e6eef8}
+#facilityLearning .learn-card.tone-2{background:#f8edda}
+@container (max-width:700px){
+ #calendar #calGrid{gap:3px}
+ #calendar #calGrid .day{padding:5px 3px;min-height:96px}
+ #calendar #calGrid .calendar-task-name{font-size:14px;line-height:1.55}
+ #calendar #calGrid .chip{font-size:13px;padding:4px 2px;line-height:1.55}
+ #calendar #calGrid .dow{font-size:13px}
+}
+@media(max-width:900px){html[data-facility-layout="sidebar"] main{padding:16px}html[data-facility-layout="sidebar"] .panel{padding:16px}}
+@media(max-width:500px){html[data-facility-layout="sidebar"] main{padding:10px}html[data-facility-layout="sidebar"] .panel{padding:12px}.stock-card{padding:16px}}
+@media print{html[data-facility-layout="sidebar"] body{padding-left:0!important}#calendar #calGrid{grid-template-columns:repeat(7,minmax(0,1fr))!important}}
+
+html[data-facility-layout="sidebar"] .stat{color:#193140}
+@media(min-width:700px) and (max-width:1000px){:root[data-facility-layout="sidebar"]{--facility-sidebar-width:190px}}
+html[data-facility-layout="sidebar"] main>nav.tabs button[data-tab]{font-size:14px}
+
+</style>
+<script>
+(function () {
+  'use strict';
+  if (window.FacilityThemeApplied) return;
+  window.FacilityThemeApplied = true;
+  var grid = document.getElementById('calGrid');
+  if (!grid) return;
+  var scheduled = false;
+
+  function updateTodayColumn() {
+    scheduled = false;
+    if (!grid.getClientRects().length) return;
+    var headers = Array.from(grid.querySelectorAll('.dow')).filter(function (node) {
+      return getComputedStyle(node).display !== 'none';
+    });
+    var today = grid.querySelector('.day.today');
+    if (!today || getComputedStyle(today).display === 'none' || headers.length < 2) {
+      grid.style.removeProperty('grid-template-columns');
+      return;
+    }
+    var firstHeaders = Array.from(grid.querySelectorAll('.dow'));
+    var visibleToday = Array.from(grid.children).indexOf(today) % firstHeaders.length;
+    var column = headers.indexOf(firstHeaders[visibleToday]);
+    if (column < 0) {
+      grid.style.removeProperty('grid-template-columns');
+      return;
+    }
+    var gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+    var count = headers.length;
+    var columns = headers.map(function (_, index) {
+      var delta = index === column ? 4 : -4 / (count - 1);
+      return 'minmax(0,calc((100% - ' + (count - 1) * gap + 'px) / ' + count + (delta >= 0 ? ' + ' : ' - ') + Math.abs(delta) + 'px))';
+    }).join(' ');
+    if (grid.style.getPropertyValue('grid-template-columns') !== columns) {
+      grid.style.setProperty('grid-template-columns', columns, 'important');
+    }
+  }
+
+  function schedule() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(updateTodayColumn);
+  }
+  new MutationObserver(schedule).observe(grid, { childList: true, subtree: true });
+  if (window.ResizeObserver) new ResizeObserver(schedule).observe(grid);
+  window.addEventListener('resize', schedule);
+  window.addEventListener('beforeprint', function () { grid.style.removeProperty('grid-template-columns'); });
+  window.addEventListener('afterprint', schedule);
+  document.addEventListener('visibilitychange', schedule);
+  schedule();
+})();
+
+</script>
